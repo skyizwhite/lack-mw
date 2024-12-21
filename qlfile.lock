@@ -1,0 +1,20 @@
+("quicklisp" .
+ (:class qlot/source/dist:source-dist
+  :initargs (:distribution "https://beta.quicklisp.org/dist/quicklisp.txt" :%version :latest)
+  :version "2024-10-12"))
+("lack" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "fukamachi/lack" :ref nil :branch nil :tag nil)
+  :version "github-866b5f5c082db0f9c7e7c78b46ed2459391c6423"))
+("quri" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "fukamachi/quri" :ref nil :branch nil :tag nil)
+  :version "github-45e0ff7f15a96ae9aef02b977375c6984d57a608"))
+("clack" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "fukamachi/clack" :ref nil :branch nil :tag nil)
+  :version "github-935be5b7c862225556a312ed5ed5521a4afd98ae"))
+("rove" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "fukamachi/rove" :ref nil :branch nil :tag nil)
+  :version "github-cacea7331c10fe9d8398d104b2dfd579bf7ea353"))
