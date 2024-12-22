@@ -2,6 +2,8 @@
 
 Middleware collection for [Lack](https://github.com/fukamachi/lack).
 
+These middlewares were ported from [Hono](https://github.com/honojs/hono).
+
 ## Middlewares
 
 - **trailing-slash**  
@@ -18,3 +20,5 @@ Middleware collection for [Lack](https://github.com/fukamachi/lack).
 Licensed under the MIT License.
 
 © 2024 skyizwhite
+
+© 2021 - present, Yusuke Wada and Hono contributors
