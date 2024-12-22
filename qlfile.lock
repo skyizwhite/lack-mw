@@ -10,11 +10,11 @@
  (:class qlot/source/github:source-github
   :initargs (:repos "fukamachi/quri" :ref nil :branch nil :tag nil)
   :version "github-45e0ff7f15a96ae9aef02b977375c6984d57a608"))
-("clack" .
- (:class qlot/source/github:source-github
-  :initargs (:repos "fukamachi/clack" :ref nil :branch nil :tag nil)
-  :version "github-935be5b7c862225556a312ed5ed5521a4afd98ae"))
 ("rove" .
  (:class qlot/source/github:source-github
   :initargs (:repos "fukamachi/rove" :ref nil :branch nil :tag nil)
   :version "github-cacea7331c10fe9d8398d104b2dfd579bf7ea353"))
+("ningle" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "fukamachi/ningle" :ref nil :branch nil :tag nil)
+  :version "github-ae0c79bbd7c71633268fe3130ed4f12ca4be2f9a"))
