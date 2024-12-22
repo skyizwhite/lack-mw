@@ -34,13 +34,13 @@
       (multiple-value-bind (body status headers)
           (request "/")
         (declare (ignore headers))
-        (ok (not (null body)))
+        (ok (string= body "ok"))
         (ok (eql status 200)))
       
       (multiple-value-bind (body status headers)
           (request "/without/trailing/slash")
         (declare (ignore headers))
-        (ok (not (null body)))
+        (ok (string= body "ok"))
         (ok (eql status 200)))
       
       (multiple-value-bind (body status headers)
@@ -61,21 +61,20 @@
     (testing-app *app-with-trailing-slash*
       (multiple-value-bind (body status headers)
           (request "/")
-        (declare (ignore headers))
-
-        (ok (not (null body)))
+        (declare (ignore headers))        
+        (ok (string= body "ok"))
         (ok (eql status 200)))
       
       (multiple-value-bind (body status headers)
           (request "/something.file")
         (declare (ignore headers))
-        (ok (not (null body)))
+        (ok (string= body "ok"))
         (ok (eql status 200)))
 
       (multiple-value-bind (body status headers)
           (request "/with/trailing/slash/")
         (declare (ignore headers))
-        (ok (not (null body)))
+        (ok (string= body "ok"))
         (ok (eql status 200)))
       
       (multiple-value-bind (body status headers)
