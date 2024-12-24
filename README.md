@@ -1,7 +1,7 @@
 # lack-mw
 
 Middleware collection for [Lack](https://github.com/fukamachi/lack).
-These middlewares were ported from [Hono](https://github.com/honojs/hono).
+Some middlewares have been ported from [Hono](https://github.com/honojs/hono).
 
 ## Middlewares
 
