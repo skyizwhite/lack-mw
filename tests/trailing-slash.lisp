@@ -7,13 +7,13 @@
                 #:request)
   (:import-from #:ningle)
   (:import-from #:lack-mw/trailing-slash
-                #:*trim-trailing-slash*
-                #:*append-trailing-slash*))
+                #:trim-trailing-slash
+                #:append-trailing-slash))
 (in-package #:lack-mw-test/trailing-slash)
 
 (defparameter *app-without-trailing-slash*
   (lack:builder
-   *trim-trailing-slash*
+   (trim-trailing-slash)
    (let ((raw-app (make-instance 'ningle:app)))
      (setf (ningle:route raw-app "/") "ok")
      (setf (ningle:route raw-app "/without/trailing/slash") "ok")
@@ -21,7 +21,7 @@
 
 (defparameter *app-with-trailing-slash*
   (lack:builder
-   *append-trailing-slash*
+   (append-trailing-slash)
    (let ((raw-app (make-instance 'ningle:app)))
      (setf (ningle:route raw-app "/") "ok")
      (setf (ningle:route raw-app "/something.file") "ok")

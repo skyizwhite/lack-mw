@@ -1,14 +1,14 @@
 (defpackage #:lack-mw/trailing-slash
   (:use #:cl)
   (:import-from #:quri)
-  (:export #:*trim-trailing-slash*
-           #:*append-trailing-slash*))
+  (:export #:trim-trailing-slash
+           #:append-trailing-slash))
 (in-package #:lack-mw/trailing-slash)
 
 (defun last-string (str)
   (subseq str (- (length str) 1)))
 
-(defparameter *trim-trailing-slash*
+(defun trim-trailing-slash ()
   (lambda (app)
     (lambda (env)
       (let* ((req-uri (quri:uri (getf env :request-uri)))
@@ -25,7 +25,7 @@
               `(301 (:location ,(quri:render-uri red-uri)) ()))
             response)))))
 
-(defparameter *append-trailing-slash*
+(defun append-trailing-slash ()
   (lambda (app)
     (lambda (env)
       (let* ((req-uri (quri:uri (getf env :request-uri)))
