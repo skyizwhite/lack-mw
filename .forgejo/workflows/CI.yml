@@ -17,22 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Restore cache
-        id: restore-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            /usr/local/bin/ros
-            /usr/local/etc/roswell/
-            ~/.roswell
-            ~/.config/common-lisp/source-registry.conf.d
-            ~/lisp
-            .qlot/
-          key: roswell-${{ runner.os }}-${{ matrix.lisp }}-${{ hashFiles('qlfile.lock') }}
 
       - name: Install dependencies
-        if: steps.restore-cache.outputs.cache-hit != 'true'
         env:
           LISP: ${{ matrix.lisp }}
         run: |
@@ -40,20 +26,6 @@ jobs:
           ros install fukamachi/qlot
           PATH="~/.roswell/bin:$PATH"
           qlot install
-
-      - name: Save cache
-        id: save-cache
-        uses: actions/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            /usr/local/bin/ros
-            /usr/local/etc/roswell/
-            ~/.roswell
-            ~/.config/common-lisp/source-registry.conf.d
-            ~/lisp
-            .qlot/
-          key: ${{ steps.restore-cache.outputs.cache-primary-key }}
 
       - name: Run tests
         run: .qlot/bin/rove lack-mw.asd

@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,14 +15,17 @@ jobs:
         lisp:
           - sbcl-bin
 
-    env:
-      LISP: ${{ matrix.lisp }}
-
     steps:
       - uses: actions/checkout@v4
-      - uses: 40ants/setup-lisp@v4
-        with:
-          asdf-system: lack-mw
-      - uses: 40ants/run-tests@v2
-        with:
-          asdf-system: lack-mw
+
+      - name: Install dependencies
+        env:
+          LISP: ${{ matrix.lisp }}
+        run: |
+          curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+          ros install fukamachi/qlot
+          PATH="~/.roswell/bin:$PATH"
+          qlot install
+
+      - name: Run tests
+        run: .qlot/bin/rove lack-mw.asd
