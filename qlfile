@@ -1,5 +1,6 @@
-github lack fukamachi/lack
-github quri fukamachi/quri
-github rove fukamachi/rove
-github dissect Shinmera/dissect ; workaround
-github ningle fukamachi/ningle
+ql lack
+ql quri
+
+git rove https://github.com/fukamachi/rove
+git dissect https://github.com/Shinmera/dissect ; workaround
+git ningle https://github.com/fukamachi/ningle
