@@ -2,7 +2,7 @@
 
 This middleware handles Trailing Slash in the URL on a GET request.
 
-`append-trailing-slash` redirects the URL to which it added the Trailing Slash if the content was not found. Also, `trim-trailing-slash` will remove the Trailing Slash.
+`*append-trailing-slash*` redirects the URL to which it added the Trailing Slash if the content was not found. Also, `*trim-trailing-slash*` will remove the Trailing Slash.
 
 ## Usage
 
@@ -14,7 +14,7 @@ Example of redirecting a GET request of `/about/me` to `/about/me/`.
   (:import-from #:ningle)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:append-trailing-slash))
+                #:*append-trailing-slash*))
 (in-package #:app/main)
 
 (defparameter *raw-app* (make-instance 'ningle:app))
@@ -23,7 +23,7 @@ Example of redirecting a GET request of `/about/me` to `/about/me/`.
 
 (defparameter *app*
   (lack:builder
-    (append-trailing-slash)
+    *append-trailing-slash*
     *raw-app*))
 ```
 
@@ -35,7 +35,7 @@ Example of redirecting a GET request of `/about/me/` to `/about/me`.
   (:import-from #:ningle)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:trim-trailing-slash))
+                #:*trim-trailing-slash*))
 (in-package #:app/main)
 
 (defparameter *raw-app* (make-instance 'ningle:app))
@@ -44,7 +44,7 @@ Example of redirecting a GET request of `/about/me/` to `/about/me`.
 
 (defparameter *app*
   (lack:builder
-    (trim-trailing-slash)
+    *trim-trailing-slash*
     *raw-app*))
 ```
 
