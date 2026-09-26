@@ -1,5 +1,5 @@
 (defsystem "lack-mw-test"
-  :version "0.2.0"
+  :version "0.3.0"
   :class :package-inferred-system
   :pathname "tests"
   :depends-on ("rove"
