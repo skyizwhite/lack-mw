@@ -16,6 +16,7 @@
                  #:lack-mw/language
                  #:lack-mw/method-override
                  #:lack-mw/powered-by
+                 #:lack-mw/recovery
                  #:lack-mw/request-id
                  #:lack-mw/secure-headers
                  #:lack-mw/timing

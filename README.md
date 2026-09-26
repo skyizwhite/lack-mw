@@ -19,6 +19,7 @@ Middleware collection for [Lack](https://github.com/fukamachi/lack).
 - [method-override](/docs/method-override.md)
 - [oauth-providers](/docs/oauth-providers.md) (GitHub, Google)
 - [powered-by](/docs/powered-by.md)
+- [recovery](/docs/recovery.md)
 - [request-id](/docs/request-id.md)
 - [secure-headers](/docs/secure-headers.md)
 - [timing](/docs/timing.md)
