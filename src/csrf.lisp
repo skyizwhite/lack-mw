@@ -1,7 +1,7 @@
 (defpackage #:lack-mw/csrf
   (:use #:cl)
   (:import-from #:cl-ppcre)
-  (:export #:*csrf*))
+  (:export #:*mw-csrf*))
 (in-package #:lack-mw/csrf)
 
 (defparameter +sec-fetch-site-values+ '("same-origin" "same-site" "none" "cross-site"))
@@ -35,7 +35,7 @@
              (declare (ignore env))
              (member value option :test #'string=)))))
 
-(defparameter *csrf*
+(defparameter *mw-csrf*
   (lambda (app &key origin sec-fetch-site)
     (let ((origin-p (matcher origin
                              (lambda (value env) (string= value (request-origin env)))))

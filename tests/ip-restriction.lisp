@@ -4,7 +4,7 @@
   (:import-from #:lack/test
                 #:generate-env)
   (:import-from #:lack-mw/ip-restriction
-                #:*ip-restriction*))
+                #:*mw-ip-restriction*))
 (in-package #:lack-mw-test/ip-restriction)
 
 (defparameter *ok-app*
@@ -19,14 +19,14 @@
   (first (call app ip)))
 
 (defun match-p (addr rule)
-  (let ((app (funcall *ip-restriction* *ok-app*
+  (let ((app (funcall *mw-ip-restriction* *ok-app*
                       :allow-list (list rule)
                       :get-ip (constantly addr))))
     (= (first (funcall app (generate-env "/"))) 200)))
 
 (deftest restrict
   (testing "basic"
-    (let ((app (funcall *ip-restriction* *ok-app*
+    (let ((app (funcall *mw-ip-restriction* *ok-app*
                         :allow-list '("192.168.1.0" "192.168.2.0/24")
                         :deny-list '("192.168.2.10"))))
       (ok (= (status-for app "0.0.0.0") 403))
@@ -35,17 +35,17 @@
       (ok (= (status-for app "192.168.2.10") 403))
       (ok (equal (third (call app "0.0.0.0")) '("Forbidden")))))
   (testing "allow-empty"
-    (let ((app (funcall *ip-restriction* *ok-app* :deny-list '("192.168.1.0"))))
+    (let ((app (funcall *mw-ip-restriction* *ok-app* :deny-list '("192.168.1.0"))))
       (ok (= (status-for app "0.0.0.0") 200))
       (ok (= (status-for app "192.168.1.0") 403))
       (ok (= (status-for app "192.168.2.5") 200))
       (ok (= (status-for app "192.168.2.10") 200))))
   (testing "no address"
-    (let ((app (funcall *ip-restriction* *ok-app*)))
+    (let ((app (funcall *mw-ip-restriction* *ok-app*)))
       (ok (= (status-for app nil) 403))
       (ok (= (status-for app "127.0.0.1") 200))))
   (testing "custom on-error"
-    (let ((app (funcall *ip-restriction* *ok-app*
+    (let ((app (funcall *mw-ip-restriction* *ok-app*
                         :get-ip (constantly "0.0.0.0")
                         :deny-list '("0.0.0.0")
                         :on-error (lambda (remote env)
@@ -54,10 +54,10 @@
       (ok (equal (funcall app (generate-env "/")) '(418 () ("0.0.0.0" "IPV4"))))))
   (testing "invalid remote address"
     (dolist (ip '("999.999.999.999" "2001:db8::1%eth0" "1234:::5678"))
-      (let ((app (funcall *ip-restriction* *ok-app* :allow-list '("127.0.0.1"))))
+      (let ((app (funcall *mw-ip-restriction* *ok-app* :allow-list '("127.0.0.1"))))
         (ok (= (status-for app ip) 403) ip))))
   (testing "on-error is not called for invalid remote addresses"
-    (let* ((app (funcall *ip-restriction* *ok-app*
+    (let* ((app (funcall *mw-ip-restriction* *ok-app*
                          :allow-list '("127.0.0.1")
                          :on-error (lambda (remote env)
                                      (declare (ignore remote env))
@@ -66,13 +66,13 @@
       (ok (= (first res) 403))
       (ok (equal (third res) '("Forbidden")))))
   (testing "link-local zone id is accepted"
-    (let ((app (funcall *ip-restriction* *ok-app* :allow-list '("fe80::1"))))
+    (let ((app (funcall *mw-ip-restriction* *ok-app* :allow-list '("fe80::1"))))
       (ok (= (status-for app "fe80::1%eth0") 200)))))
 
 (deftest rules
   (testing "invalid CIDR rules signal at build time"
     (dolist (rule '("192.168.0.0/33" "::/129" "127.0.0.1/" "::ffff:127.0.0.1/129"))
-      (ok (signals (funcall *ip-restriction* *ok-app* :allow-list (list rule))) rule)))
+      (ok (signals (funcall *mw-ip-restriction* *ok-app* :allow-list (list rule))) rule)))
   (testing "star"
     (ok (match-p "192.168.2.0" "*"))
     (ok (match-p "192.168.2.1" "*"))

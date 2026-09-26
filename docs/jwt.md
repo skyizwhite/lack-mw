@@ -9,14 +9,14 @@ This middleware verifies a JWT sent in the `Authorization: Bearer` header (or in
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*jwt*
+                #:*mw-jwt*
                 #:jwt-payload
                 #:with-args))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *jwt* :secret "it-is-very-secret" :alg "HS256")
+    (with-args *mw-jwt* :secret "it-is-very-secret" :alg "HS256")
     (lambda (env)
       ;; claims alist, e.g. (("sub" . "1234") ("exp" . 1790000000))
       (let ((payload (jwt-payload env)))

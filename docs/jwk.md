@@ -9,7 +9,7 @@ This middleware verifies a JWT against a set of public JSON Web Keys, selected b
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*jwk*
+                #:*mw-jwk*
                 #:jwt-payload
                 #:with-args))
 (in-package #:app/main)
@@ -19,7 +19,7 @@ This middleware verifies a JWT against a set of public JSON Web Keys, selected b
 
 (defparameter *app*
   (lack:builder
-    (with-args *jwk* :keys *keys* :alg '("RS256"))
+    (with-args *mw-jwk* :keys *keys* :alg '("RS256"))
     (lambda (env)
       `(200 (:content-type "text/plain")
             (,(format nil "~S" (jwt-payload env)))))))
@@ -28,7 +28,7 @@ This middleware verifies a JWT against a set of public JSON Web Keys, selected b
 To use keys from a JWKS endpoint, pass a function that returns them (fetch and cache them with the HTTP client of your choice):
 
 ```lisp
-(with-args *jwk*
+(with-args *mw-jwk*
   :keys (lambda (env)
           (declare (ignore env))
           (gethash "keys" (yason:parse (fetch-jwks-cached))))

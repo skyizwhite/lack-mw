@@ -9,7 +9,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/request-id
-                #:*request-id*
+                #:*mw-request-id*
                 #:request-id
                 #:generate-uuid))
 (in-package #:lack-mw-test/request-id)
@@ -24,7 +24,7 @@
   `(200 (:content-type "text/plain") (,(or (request-id env) "No Request ID"))))
 
 (defun app (&rest args)
-  (lack:builder (apply #'with-args *request-id* args) #'raw-app))
+  (lack:builder (apply #'with-args *mw-request-id* args) #'raw-app))
 
 (deftest request-id
   (testing "should return random request id"

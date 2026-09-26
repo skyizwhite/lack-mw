@@ -10,7 +10,7 @@ This middleware adds an `ETag` header computed from the response body, and answe
   (:import-from #:ningle)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*etag*
+                #:*mw-etag*
                 #:+retained-304-headers+
                 #:with-args))
 (in-package #:app/main)
@@ -21,13 +21,13 @@ This middleware adds an `ETag` header computed from the response body, and answe
 
 (defparameter *app*
   (lack:builder
-    *etag*
+    *mw-etag*
     *raw-app*))
 
 ;; weak tags, one more header on 304s, and SHA-256
 (defparameter *app*
   (lack:builder
-    (with-args *etag*
+    (with-args *mw-etag*
       :weak t
       :retained-headers (cons :x-message-retain +retained-304-headers+)
       :generate-digest (lambda (octets)

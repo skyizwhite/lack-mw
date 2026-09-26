@@ -10,13 +10,13 @@ This middleware detects the user's preferred language from the query string, coo
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*language*
+                #:*mw-language*
                 #:language))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *language*
+    (with-args *mw-language*
       :supported-languages '("en" "ja") ; must include the fallback language
       :fallback-language "en")
     (lambda (env)

@@ -8,8 +8,8 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/ua-blocker
-                #:*ua-blocker*
-                #:*ai-robots-txt*)
+                #:*mw-ua-blocker*
+                #:*mw-ai-robots-txt*)
   (:import-from #:lack-mw/ua-blocker/ai-bots
                 #:+ai-bots+
                 #:+non-respecting-ai-bots+
@@ -30,7 +30,7 @@
             (t (error "Unexpected response: ~a ~a" status body))))))
 
 (defun blocker (blocklist)
-  (lack:builder (with-args *ua-blocker* :blocklist blocklist) (text-app "ok")))
+  (lack:builder (with-args *mw-ua-blocker* :blocklist blocklist) (text-app "ok")))
 
 (deftest custom-blocklist
   (let ((app (blocker '("BadBot" "EvilCrawler" "SpamBot"))))
@@ -62,7 +62,7 @@
 
 (deftest empty-and-default
   (ng (blocked-p (blocker '()) "BadBot/1.0"))
-  (ng (blocked-p (lack:builder *ua-blocker* (text-app "ok")) "BadBot/1.0")))
+  (ng (blocked-p (lack:builder *mw-ua-blocker* (text-app "ok")) "BadBot/1.0")))
 
 (deftest regex-blocklist
   (let ((app (blocker "BADREGEXBOT|EVILREGEXBOT")))
@@ -72,7 +72,7 @@
   (ok (blocked-p (blocker (ppcre:create-scanner "^CURL/")) "curl/8.0")))
 
 (deftest ai-robots-txt
-  (testing-app (lack:builder *ai-robots-txt* (text-app "ok"))
+  (testing-app (lack:builder *mw-ai-robots-txt* (text-app "ok"))
     (multiple-value-bind (body status headers) (request "/robots.txt")
       (ok (eql status 200))
       (ok (string= body +ai-robots-txt+))
@@ -83,6 +83,6 @@
 "))))
     (ok (string= "Disallow: /
 " +ai-robots-txt+ :start2 end)))
-  (testing-app (lack:builder (with-args *ai-robots-txt* :path "/ai-robots.txt") (text-app "ok"))
+  (testing-app (lack:builder (with-args *mw-ai-robots-txt* :path "/ai-robots.txt") (text-app "ok"))
     (ok (string= (request "/ai-robots.txt") +ai-robots-txt+))
     (ok (string= (request "/robots.txt") "ok"))))

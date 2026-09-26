@@ -3,7 +3,7 @@
   (:import-from #:circular-streams
                 #:circular-input-stream
                 #:make-circular-input-stream)
-  (:export #:*body-limit*))
+  (:export #:*mw-body-limit*))
 (in-package #:lack-mw/body-limit)
 
 (defun payload-too-large (env)
@@ -21,8 +21,8 @@
               when (< read (length buffer)) return nil)
       (file-position stream 0))))
 
-(defparameter *body-limit*
-  (lambda (app &key (max-size (error ":max-size is required for *body-limit*"))
+(defparameter *mw-body-limit*
+  (lambda (app &key (max-size (error ":max-size is required for *mw-body-limit*"))
                     (on-error #'payload-too-large))
     (check-type max-size (integer 0))
     (lambda (env)

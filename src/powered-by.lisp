@@ -2,10 +2,10 @@
   (:use #:cl)
   (:import-from #:lack/util
                 #:funcall-with-cb)
-  (:export #:*powered-by*))
+  (:export #:*mw-powered-by*))
 (in-package #:lack-mw/powered-by)
 
-(defparameter *powered-by*
+(defparameter *mw-powered-by*
   (lambda (app &key (server-name "Lack"))
     (lambda (env)
       (funcall-with-cb

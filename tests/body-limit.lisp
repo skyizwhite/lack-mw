@@ -13,7 +13,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/body-limit
-                #:*body-limit*))
+                #:*mw-body-limit*))
 (in-package #:lack-mw-test/body-limit)
 
 (defvar *called* nil)
@@ -43,7 +43,7 @@
 (defparameter *text2* "hono is so hot and cute")    ; 23 bytes
 
 (deftest body-limit
-  (let ((app (lack:builder (with-args *body-limit* :max-size 14) #'echo-app)))
+  (let ((app (lack:builder (with-args *mw-body-limit* :max-size 14) #'echo-app)))
     (testing "GET request"
       (testing-app app
         (multiple-value-bind (body status) (request "/")
@@ -84,7 +84,7 @@
 
   (testing "custom error handler"
     (let ((app (lack:builder
-                (with-args *body-limit*
+                (with-args *mw-body-limit*
                   :max-size 15
                   :on-error (lambda (env)
                               (declare (ignore env))
@@ -100,7 +100,7 @@
           (ok (string= body "no"))))))
 
   (testing "Transfer-Encoding takes precedence over Content-Length"
-    (let ((app (lack:builder (with-args *body-limit* :max-size 10) #'echo-app)))
+    (let ((app (lack:builder (with-args *mw-body-limit* :max-size 10) #'echo-app)))
       (ok (= (call app (chunked-env "this is a large content that exceeds 10 bytes"
                                     :content-length 5))
              413))
@@ -108,9 +108,9 @@
       (ok (= (call app (chunked-env "test")) 200))))
 
   (testing "large chunked body is rejected without being read whole"
-    (let ((app (lack:builder (with-args *body-limit* :max-size 8) #'echo-app)))
+    (let ((app (lack:builder (with-args *mw-body-limit* :max-size 8) #'echo-app)))
       (ok (= (call app (chunked-env (make-string 100000 :initial-element #\a))) 413))
       (ng *called*)))
 
   (testing ":max-size is required"
-    (ok (signals (lack:builder *body-limit* #'echo-app)))))
+    (ok (signals (lack:builder *mw-body-limit* #'echo-app)))))

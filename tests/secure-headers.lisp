@@ -9,9 +9,9 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/powered-by
-                #:*powered-by*)
+                #:*mw-powered-by*)
   (:import-from #:lack-mw/secure-headers
-                #:*secure-headers*
+                #:*mw-secure-headers*
                 #:secure-headers-nonce))
 (in-package #:lack-mw-test/secure-headers)
 
@@ -20,7 +20,7 @@
   '(200 (:content-type "text/plain") ("test")))
 
 (defun app (&rest args)
-  (lack:builder (apply #'with-args *secure-headers* args) #'raw-app))
+  (lack:builder (apply #'with-args *mw-secure-headers* args) #'raw-app))
 
 (defmacro with-response ((headers &optional (body (gensym)) (status (gensym)))
                          (app &rest request-args) &body forms)
@@ -78,16 +78,16 @@
 
   (testing "should remove x-powered-by header"
     ;; secure-headers outside powered-by: powered-by sets it first, then it is removed
-    (with-response (headers) ((lack:builder *secure-headers* *powered-by* #'raw-app))
+    (with-response (headers) ((lack:builder *mw-secure-headers* *mw-powered-by* #'raw-app))
       (ok (null (h headers "X-Powered-By"))))
-    (with-response (headers) ((lack:builder *powered-by* *secure-headers* #'raw-app))
+    (with-response (headers) ((lack:builder *mw-powered-by* *mw-secure-headers* #'raw-app))
       (ok (equal (h headers "X-Powered-By") "Lack")))
-    (with-response (headers) ((lack:builder (with-args *secure-headers* :remove-powered-by nil)
-                                            *powered-by* #'raw-app))
+    (with-response (headers) ((lack:builder (with-args *mw-secure-headers* :remove-powered-by nil)
+                                            *mw-powered-by* #'raw-app))
       (ok (equal (h headers "X-Powered-By") "Lack"))))
 
   (testing "should override Strict-Transport-Security header set by the app"
-    (with-response (headers) ((lack:builder *secure-headers*
+    (with-response (headers) ((lack:builder *mw-secure-headers*
                                             (lambda (env)
                                               (declare (ignore env))
                                               '(200 (:strict-transport-security "Hono") ("ok")))))
@@ -129,7 +129,7 @@
                               "mediasession=(self), deferred-fetch=()")))))
 
   (testing "delayed response"
-    (let* ((mw (funcall *secure-headers*
+    (let* ((mw (funcall *mw-secure-headers*
                         (lambda (env)
                           (declare (ignore env))
                           (lambda (responder)
@@ -141,7 +141,7 @@
       (ok (null (getf (second result) :x-powered-by))))))
 
 (defun nonce-app (&rest args)
-  (lack:builder (apply #'with-args *secure-headers* args)
+  (lack:builder (apply #'with-args *mw-secure-headers* args)
                 (lambda (env)
                   `(200 (:content-type "text/plain")
                         (,(format nil "nonce: ~A" (secure-headers-nonce env)))))))
@@ -247,7 +247,7 @@
       (testing (format nil "CSP nonce by app own function (~A)" key)
         (with-response (headers body)
             ((lack:builder
-              (with-args *secure-headers* key (list :script-src (list "'self'" #'set-nonce)
+              (with-args *mw-secure-headers* key (list :script-src (list "'self'" #'set-nonce)
                                                     :style-src (list "'self'" #'set-nonce)))
               (lambda (env)
                 `(200 () (,(format nil "script: ~A, style: ~A"

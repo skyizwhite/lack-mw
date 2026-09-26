@@ -10,12 +10,12 @@ This middleware limits access to resources based on the client's IP address, usi
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*ip-restriction*))
+                #:*mw-ip-restriction*))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *ip-restriction*
+    (with-args *mw-ip-restriction*
       ;; Block a specific IP and an entire subnet
       :deny-list '("192.168.0.5" "10.0.0.0/8")
       ;; Only allow requests from localhost and a private range
@@ -28,7 +28,7 @@ This middleware limits access to resources based on the client's IP address, usi
 Behind a reverse proxy, get the address from a header instead:
 
 ```lisp
-(with-args *ip-restriction*
+(with-args *mw-ip-restriction*
   :allow-list '("203.0.113.0/24")
   :get-ip (lambda (env) (gethash "x-real-ip" (getf env :headers)))
   :on-error (lambda (remote env)

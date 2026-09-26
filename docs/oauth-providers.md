@@ -14,15 +14,15 @@ These middlewares need an HTTP client (dexador, and so OpenSSL through cl+ssl), 
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*mount*)
+                #:*mw-mount*)
   (:import-from #:lack-mw/oauth-providers
                 #:oauth-token
                 #:oauth-granted-scopes)
   (:import-from #:lack-mw/oauth-providers/github
-                #:*github-auth*
+                #:*mw-github-auth*
                 #:github-user)
   (:import-from #:lack-mw/oauth-providers/google
-                #:*google-auth*
+                #:*mw-google-auth*
                 #:google-user))
 (in-package #:app/main)
 
@@ -36,16 +36,16 @@ These middlewares need an HTTP client (dexador, and so OpenSSL through cl+ssl), 
 
 (defparameter *app*
   (lack:builder
-   (with-args *mount* "/auth/github"
+   (with-args *mw-mount* "/auth/github"
      (lack:builder
-      (with-args *github-auth*
+      (with-args *mw-github-auth*
         :client-id "..." :client-secret "..."
         :scope '("read:user" "user:email")
         :oauth-app t)
       (signed-in #'github-user)))
-   (with-args *mount* "/auth/google"
+   (with-args *mw-mount* "/auth/google"
      (lack:builder
-      (with-args *google-auth*
+      (with-args *mw-google-auth*
         :client-id "..." :client-secret "..."
         :scope '("openid" "email" "profile"))
       (signed-in #'google-user)))
@@ -71,7 +71,7 @@ The user, a hash table of the provider's JSON (parsed by [jzon](https://github.c
 
 ## GitHub (`lack-mw/oauth-providers/github`)
 
-### `*github-auth*`
+### `*mw-github-auth*`
 
 | Option | Default | Description |
 |---|---|---|
@@ -83,7 +83,7 @@ The user, a hash table of the provider's JSON (parsed by [jzon](https://github.c
 
 ## Google (`lack-mw/oauth-providers/google`)
 
-### `*google-auth*`
+### `*mw-google-auth*`
 
 | Option | Default | Description |
 |---|---|---|

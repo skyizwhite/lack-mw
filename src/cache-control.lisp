@@ -2,7 +2,7 @@
   (:use #:cl)
   (:import-from #:lack/util
                 #:funcall-with-cb)
-  (:export #:*cache-control*))
+  (:export #:*mw-cache-control*))
 (in-package #:lack-mw/cache-control)
 
 (defun prefix-p (prefix path)
@@ -28,7 +28,7 @@
     (multiple-value-bind (value matched) (rule-value rule env res)
       (when matched (return value)))))
 
-(defparameter *cache-control*
+(defparameter *mw-cache-control*
   (lambda (app &key rules default override)
     (lambda (env)
       ;; a copy taken before the call: the static middleware strips its prefix from path-info

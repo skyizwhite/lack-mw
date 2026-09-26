@@ -9,13 +9,13 @@ This middleware provides Bearer authentication: requests are accepted only when 
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*bearer-auth*
+                #:*mw-bearer-auth*
                 #:with-args))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *bearer-auth* :token "honoishot")
+    (with-args *mw-bearer-auth* :token "honoishot")
     (lambda (env)
       (declare (ignore env))
       '(200 (:content-type "text/plain") ("You are authorized")))))
@@ -24,7 +24,7 @@ This middleware provides Bearer authentication: requests are accepted only when 
 Validating tokens dynamically:
 
 ```lisp
-(with-args *bearer-auth*
+(with-args *mw-bearer-auth*
   :verify-token (lambda (token env)
                   (declare (ignore env))
                   (valid-token-p token)))

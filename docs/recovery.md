@@ -12,12 +12,12 @@ Place it outermost, before the other middlewares, so it catches errors from all 
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*recovery*))
+                #:*mw-recovery*))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-   (with-args *recovery* :format :json)
+   (with-args *mw-recovery* :format :json)
    ;; other middlewares...
    (lambda (env)
      (declare (ignore env))
@@ -28,8 +28,8 @@ To have the 500 responses logged by an access log, put the access log outside it
 
 ```lisp
 (lack:builder
- *accesslog*
- *recovery*
+ *mw-accesslog*
+ *mw-recovery*
  *raw-app*)
 ```
 
@@ -37,7 +37,7 @@ Show the error details while developing:
 
 ```lisp
 (lack:builder
- (with-args *recovery* :dev-mode (equal (uiop:getenv "DEV") "1"))
+ (with-args *mw-recovery* :dev-mode (equal (uiop:getenv "DEV") "1"))
  *raw-app*)
 ```
 
@@ -45,7 +45,7 @@ Answer with your own response:
 
 ```lisp
 (lack:builder
- (with-args *recovery*
+ (with-args *mw-recovery*
    :on-error (lambda (condition env)
                (declare (ignore condition env))
                '(503 (:content-type "text/plain") ("Try again later"))))
@@ -54,7 +54,7 @@ Answer with your own response:
 
 ## API
 
-### `*recovery*`
+### `*mw-recovery*`
 
 | Option | Default | Description |
 |---|---|---|

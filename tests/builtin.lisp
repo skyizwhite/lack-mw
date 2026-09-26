@@ -8,11 +8,11 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/builtin
-                #:*basic-auth*
-                #:*session-csrf*
-                #:*mount*
-                #:*session*
-                #:*when*
+                #:*mw-basic-auth*
+                #:*mw-session-csrf*
+                #:*mw-mount*
+                #:*mw-session*
+                #:*mw-when*
                 #:make-memory-store
                 #:make-cookie-state))
 (in-package #:lack-mw-test/builtin)
@@ -51,7 +51,7 @@
 (deftest builtin
   (testing "basic-auth"
     (testing-app (lack:builder
-                  (with-args *basic-auth*
+                  (with-args *mw-basic-auth*
                     :authenticator (lambda (user pass) (and (string= user "u") (string= pass "p"))))
                   (text-app "ok"))
       (multiple-value-bind (body status) (request "/")
@@ -64,26 +64,26 @@
 
   (testing "mount"
     (testing-app (lack:builder
-                  (with-args *mount* "/api" (text-app "api"))
+                  (with-args *mw-mount* "/api" (text-app "api"))
                   (text-app "root"))
       (ok (string= (request "/api/x") "api"))
       (ok (string= (request "/x") "root"))))
 
   (testing "when"
     (testing-app (lack:builder
-                  (with-args *when*
+                  (with-args *mw-when*
                     (lambda (env) (string= (getf env :path-info) "/guarded"))
-                    (with-args *basic-auth* :authenticator (constantly nil)))
+                    (with-args *mw-basic-auth* :authenticator (constantly nil)))
                   (text-app "ok"))
       (ok (eql (nth-value 1 (request "/guarded")) 401))
       (ok (eql (nth-value 1 (request "/open")) 200))))
 
   (testing "session and session-csrf"
     (testing-app (lack:builder
-                  (with-args *session*
+                  (with-args *mw-session*
                     :store (make-memory-store)
                     :state (make-cookie-state))
-                  *session-csrf*
+                  *mw-session-csrf*
                   (text-app "ok"))
       (ok (eql (nth-value 1 (request "/")) 200))
       (ok (eql (nth-value 1 (request "/" :method :post :content "a=b")) 400)))))

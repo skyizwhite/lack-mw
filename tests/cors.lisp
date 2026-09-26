@@ -8,7 +8,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/cors
-                #:*cors*))
+                #:*mw-cors*))
 (in-package #:lack-mw-test/cors)
 
 (defun ok-app (env)
@@ -29,7 +29,7 @@
        ,@body)))
 
 (defparameter *api2*
-  (with-args *cors*
+  (with-args *mw-cors*
     :origin "http://example.com"
     :allow-headers '("X-Custom-Header" "Upgrade-Insecure-Requests")
     :allow-methods '("POST" "GET" "OPTIONS")
@@ -38,10 +38,10 @@
     :credentials t))
 
 (defparameter *api3*
-  (with-args *cors* :origin '("http://example.com" "http://example.org" "http://example.dev")))
+  (with-args *mw-cors* :origin '("http://example.com" "http://example.org" "http://example.dev")))
 
 (defparameter *api4*
-  (with-args *cors*
+  (with-args *mw-cors*
     :origin (lambda (origin env)
               (declare (ignore env))
               (let ((suffix ".example.com"))
@@ -51,7 +51,7 @@
                     "http://example.com")))))
 
 (defparameter *api7*
-  (with-args *cors*
+  (with-args *mw-cors*
     :origin (lambda (origin env)
               (declare (ignore env))
               (if (string= origin "http://example.com") origin "*"))
@@ -62,17 +62,17 @@
                          '("GET" "HEAD")))))
 
 (defparameter *api10*
-  (with-args *cors* :origin "*" :credentials t))
+  (with-args *mw-cors* :origin "*" :credentials t))
 
 (deftest cors
   (testing "GET default"
-    (with-response ((lack:builder *cors* #'ok-app) "/api/abc")
+    (with-response ((lack:builder *mw-cors* #'ok-app) "/api/abc")
       (ok (= status 200))
       (ok (equal (header headers "access-control-allow-origin") "*"))
       (ok (null (header headers "vary")))))
 
   (testing "Preflight default"
-    (with-response ((lack:builder *cors* #'ok-app) "/api/abc"
+    (with-response ((lack:builder *mw-cors* #'ok-app) "/api/abc"
                     :method :options
                     :headers '(("access-control-request-method" . "QUERY")
                                ("access-control-request-headers" . "X-PINGOTHER, Content-Type")))
@@ -83,7 +83,7 @@
       (ok (equal (header headers "vary") "Access-Control-Request-Headers"))))
 
   (testing "Preflight handles a large Access-Control-Request-Headers value"
-    (with-response ((lack:builder *cors* #'ok-app) "/api/abc"
+    (with-response ((lack:builder *mw-cors* #'ok-app) "/api/abc"
                     :method :options
                     :headers `(("access-control-request-headers"
                                 . ,(format nil "x~ax" (make-string 200000 :initial-element #\Space)))))
@@ -127,7 +127,7 @@
       (ok (equal (header headers "vary") "Origin"))))
 
   (testing "Keep original Vary header"
-    (with-response ((lack:builder *cors* #'vary-app) "/api/vary-header"
+    (with-response ((lack:builder *mw-cors* #'vary-app) "/api/vary-header"
                     :headers '(("origin" . "http://example.com")))
       (ok (= status 200))
       (ok (equal (header headers "access-control-allow-origin") "*"))
@@ -151,7 +151,7 @@
       (ok (equal (header headers "access-control-allow-origin") "http://example.com"))))
 
   (testing "Should not return duplicate header values"
-    (let ((mw (with-args *cors* :origin "http://example.com")))
+    (let ((mw (with-args *mw-cors* :origin "http://example.com")))
       (with-response ((lack:builder mw mw #'ok-app) "/api6/abc"
                       :headers '(("origin" . "http://example.com")))
         (ok (equal (header headers "access-control-allow-origin") "http://example.com"))
@@ -170,9 +170,9 @@
       (ok (equal (header headers "access-control-allow-methods") "GET,HEAD"))))
 
   (testing "Does not set allow methods when function returns an empty list"
-    (with-response ((lack:builder (with-args *cors* :allow-methods (lambda (o e)
-                                                                     (declare (ignore o e))
-                                                                     '()))
+    (with-response ((lack:builder (with-args *mw-cors* :allow-methods (lambda (o e)
+                                                                        (declare (ignore o e))
+                                                                        '()))
                                   #'ok-app)
                     "/" :method :options)
       (ok (null (header headers "access-control-allow-methods")))))
@@ -197,12 +197,12 @@
 
   (testing "Should not reflect an arbitrary Origin with credentials and default origin"
     (dolist (origin '("https://attacker.example" "http://evil.test" "null"))
-      (with-response ((lack:builder (with-args *cors* :credentials t) #'ok-app) "/api/me"
+      (with-response ((lack:builder (with-args *mw-cors* :credentials t) #'ok-app) "/api/me"
                       :headers `(("origin" . ,origin)))
         (ng (equal (header headers "access-control-allow-origin") origin)))))
 
   (testing "Options without origin fall back to wildcard default"
-    (let ((app (lack:builder (with-args *cors* :allow-methods '("GET" "POST")) #'ok-app)))
+    (let ((app (lack:builder (with-args *mw-cors* :allow-methods '("GET" "POST")) #'ok-app)))
       (with-response (app "/api/abc")
         (ok (= status 200))
         (ok (equal (header headers "access-control-allow-origin") "*")))
@@ -223,7 +223,7 @@
       (ok (equal (getf (second got) :vary) "Origin"))))
 
   (testing "koya's delivery CORS"
-    (let ((mw (with-args *cors*
+    (let ((mw (with-args *mw-cors*
                 :origin "*"
                 :allow-methods '("GET")
                 :allow-headers '("X-KOYA-DELIVERY-KEY")

@@ -10,7 +10,7 @@
   (:import-from #:quri)
   (:import-from #:lack-mw/helpers/url
                 #:request-url)
-  (:export #:*jwt*
+  (:export #:*mw-jwt*
            #:jwt-payload
            ;; shared with lack-mw/jwk
            #:jwk-to-key
@@ -21,7 +21,7 @@
 (in-package #:lack-mw/jwt)
 
 (defun jwt-payload (env)
-  "Returns the verified JWT claims (an alist with string keys) set by *JWT* / *JWK*."
+  "Returns the verified JWT claims (an alist with string keys) set by *MW-JWT* / *MW-JWK*."
   (getf env :lack-mw.jwt-payload))
 
 (defun now ()
@@ -242,7 +242,7 @@ Returns (values claims-alist T) on success, NIL when verification fails."
          :content-type "text/plain; charset=UTF-8")
         ("Unauthorized")))
 
-(defparameter *jwt*
+(defparameter *mw-jwt*
   (lambda (app &key secret alg cookie (header-name "Authorization") realm verification)
     (unless secret
       (error "JWT auth middleware requires options for \"secret\""))

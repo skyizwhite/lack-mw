@@ -15,7 +15,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/method-override
-                #:*method-override*))
+                #:*mw-method-override*))
 (in-package #:lack-mw-test/method-override)
 
 (defun describe-app (env)
@@ -47,8 +47,8 @@
       (values status body))))
 
 (deftest form
-  (let ((app (lack:builder *method-override* #'describe-app))
-        (custom (lack:builder (with-args *method-override* :form "custom-input-name")
+  (let ((app (lack:builder *mw-method-override* #'describe-app))
+        (custom (lack:builder (with-args *mw-method-override* :form "custom-input-name")
                               #'describe-app)))
     (testing "multipart/form-data"
       (multiple-value-bind (status body)
@@ -87,7 +87,7 @@
              404)))
 
     (testing "body stays readable downstream"
-      (let ((app (lack:builder *method-override*
+      (let ((app (lack:builder *mw-method-override*
                                (lambda (env)
                                  (list 200 nil
                                        (list (babel:octets-to-string
@@ -116,7 +116,7 @@
                               (gethash "x-method-override" (getf env :headers))))))
 
 (deftest header
-  (let ((app (lack:builder (with-args *method-override* :header "X-METHOD-OVERRIDE")
+  (let ((app (lack:builder (with-args *mw-method-override* :header "X-METHOD-OVERRIDE")
                            #'header-app)))
     (testing "Should override POST to DELETE"
       (multiple-value-bind (status body)
@@ -139,7 +139,7 @@
                                 (babel:octets-to-string (request-content req)))))))
 
 (deftest query
-  (let ((app (lack:builder (with-args *method-override* :query "_method") #'query-app)))
+  (let ((app (lack:builder (with-args *mw-method-override* :query "_method") #'query-app)))
     (testing "Should override POST to DELETE"
       (multiple-value-bind (status body) (post app "/posts?_method=delete&a=1")
         (ok (= status 200))

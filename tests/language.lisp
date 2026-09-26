@@ -4,7 +4,7 @@
   (:import-from #:lack/test
                 #:generate-env)
   (:import-from #:lack-mw/language
-                #:*language*
+                #:*mw-language*
                 #:language))
 (in-package #:lack-mw-test/language)
 
@@ -13,7 +13,7 @@
     `(200 (:content-type "text/plain") (,(language env)))))
 
 (defun make-app (&rest options)
-  (apply *language* *echo-app* options))
+  (apply *mw-language* *echo-app* options))
 
 (defun req (app uri &rest headers)
   "Return (values body set-cookie)."

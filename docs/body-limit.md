@@ -9,13 +9,13 @@ This middleware limits the size of request bodies. A request whose body is large
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*body-limit*
+                #:*mw-body-limit*
                 #:with-args))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *body-limit*
+    (with-args *mw-body-limit*
       :max-size (* 50 1024) ; 50kb
       :on-error (lambda (env)
                   (declare (ignore env))
@@ -26,7 +26,7 @@ This middleware limits the size of request bodies. A request whose body is large
 The error answer can depend on the request, e.g. HTML for htmx and JSON otherwise:
 
 ```lisp
-(with-args *body-limit*
+(with-args *mw-body-limit*
   :max-size +max-body-bytes+
   :on-error (lambda (env)
               (if (gethash "hx-request" (getf env :headers))

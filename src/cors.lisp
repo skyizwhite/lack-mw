@@ -5,7 +5,7 @@
   (:import-from #:cl-ppcre)
   (:import-from #:lack/util
                 #:funcall-with-cb)
-  (:export #:*cors*))
+  (:export #:*mw-cors*))
 (in-package #:lack-mw/cors)
 
 (defun join (strings)
@@ -31,7 +31,7 @@
              (declare (ignore env))
              (and (member o origin :test #'string=) o)))))
 
-(defparameter *cors*
+(defparameter *mw-cors*
   (lambda (app &key (origin "*")
                     (allow-methods '("GET" "HEAD" "PUT" "POST" "DELETE" "PATCH" "QUERY"))
                     (allow-headers '())

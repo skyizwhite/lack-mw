@@ -8,7 +8,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/bearer-auth
-                #:*bearer-auth*
+                #:*mw-bearer-auth*
                 #:timing-safe-equal))
 (in-package #:lack-mw-test/bearer-auth)
 
@@ -21,7 +21,7 @@
     `(200 (:content-type "text/plain" :x-custom "foo") (,body))))
 
 (defun build (body &rest options)
-  (lack:builder (apply #'with-args *bearer-auth* options) (ok-app body)))
+  (lack:builder (apply #'with-args *mw-bearer-auth* options) (ok-app body)))
 
 (defmacro with-response ((body status headers) (app path &rest request-args) &body forms)
   `(testing-app ,app
@@ -136,7 +136,7 @@
           (app "/" :headers `(("authorization" . ,(format nil "Bearer ~A" *token*))))
         (ok (= status 200)))))
   (testing "requires token or verify-token"
-    (ok (signals (funcall *bearer-auth* (ok-app "x")))))
+    (ok (signals (funcall *mw-bearer-auth* (ok-app "x")))))
   (testing "timing-safe-equal"
     (ok (timing-safe-equal "abc" "abc"))
     (ok (not (timing-safe-equal "abc" "abd")))

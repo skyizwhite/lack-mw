@@ -14,14 +14,14 @@ Block a custom list of user agents:
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*ua-blocker*))
+                #:*mw-ua-blocker*))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-   (with-args *ua-blocker* :blocklist '("ForbiddenBot" "Not You"))
+   (with-args *mw-ua-blocker* :blocklist '("ForbiddenBot" "Not You"))
    ;; or a regex matching the UPPERCASE User-Agent:
-   ;; (with-args *ua-blocker* :blocklist "(FORBIDDENBOT|NOT YOU)")
+   ;; (with-args *mw-ua-blocker* :blocklist "(FORBIDDENBOT|NOT YOU)")
    (lambda (env)
      (declare (ignore env))
      '(200 (:content-type "text/plain") ("Hello World")))))
@@ -31,7 +31,7 @@ Block all known AI bots:
 
 ```lisp
 (lack:builder
- (with-args *ua-blocker* :blocklist +ai-bots+)
+ (with-args *mw-ua-blocker* :blocklist +ai-bots+)
  *raw-app*)
 ```
 
@@ -39,8 +39,8 @@ Block only the bots known not to respect robots.txt, and serve a robots.txt for 
 
 ```lisp
 (lack:builder
- (with-args *ua-blocker* :blocklist +non-respecting-ai-bots+)
- *ai-robots-txt*
+ (with-args *mw-ua-blocker* :blocklist +non-respecting-ai-bots+)
+ *mw-ai-robots-txt*
  *raw-app*)
 ```
 
@@ -59,7 +59,7 @@ Extend the robots.txt with your own rules:
 
 ## API
 
-### `*ua-blocker*`
+### `*mw-ua-blocker*`
 
 | Option | Default | Description |
 |---|---|---|
@@ -67,7 +67,7 @@ Extend the robots.txt with your own rules:
 
 A request without a User-Agent header is let through.
 
-### `*ai-robots-txt*`
+### `*mw-ai-robots-txt*`
 
 Serves `+ai-robots-txt+` as `text/plain`.
 
@@ -84,7 +84,7 @@ Serves `+ai-robots-txt+` as `text/plain`.
 ## Note
 
 - Hono exports the AI bot lists as regexes. Here they are lists of strings, matched literally, so a `.` in a name such as `bigsur.ai` is not a wildcard.
-- Hono's `useAiRobotsTxt()` is a handler mounted on a path. Here `*ai-robots-txt*` is a middleware that answers on `:path` and passes every other request through.
+- Hono's `useAiRobotsTxt()` is a handler mounted on a path. Here `*mw-ai-robots-txt*` is a middleware that answers on `:path` and passes every other request through.
 - `src/ua-blocker/ai-bots.lisp` is generated from ai.robots.txt's `robots.json`. To update it:
 
   ```sh

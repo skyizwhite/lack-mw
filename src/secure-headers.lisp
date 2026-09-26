@@ -4,7 +4,7 @@
                 #:funcall-with-cb)
   (:import-from #:ironclad)
   (:import-from #:cl-base64)
-  (:export #:*secure-headers*
+  (:export #:*mw-secure-headers*
            #:secure-headers-nonce
            #:generate-nonce))
 (in-package #:lack-mw/secure-headers)
@@ -134,7 +134,7 @@
 (defun report-to-value (groups)
   (format nil "~{~A~^, ~}" (mapcar #'json-object groups)))
 
-(defparameter *secure-headers*
+(defparameter *mw-secure-headers*
   (lambda (app &key content-security-policy
                  content-security-policy-report-only
                  (cross-origin-embedder-policy nil)

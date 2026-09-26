@@ -9,13 +9,13 @@
                 #:fetch-json
                 #:query-string
                 #:*http-client*)
-  (:export #:*google-auth*
+  (:export #:*mw-google-auth*
            #:google-user
            #:google-revoke-token))
 (in-package #:lack-mw/oauth-providers/google)
 
 (defun google-user (env)
-  "The Google user signed in with *GOOGLE-AUTH*, as a hash table of the userinfo JSON."
+  "The Google user signed in with *MW-GOOGLE-AUTH*, as a hash table of the userinfo JSON."
   (getf env :lack-mw.google-user))
 
 (defun request-url-without-query (env)
@@ -90,11 +90,11 @@
     (declare (ignore body))
     (eql status 200)))
 
-(defparameter *google-auth*
+(defparameter *mw-google-auth*
   (lambda (app &key scope client-id client-secret redirect-uri state
                  login-hint prompt access-type)
     (unless scope
-      (error ":scope is required in *google-auth*"))
+      (error ":scope is required in *mw-google-auth*"))
     (flet ((redirect-uri (env) (or redirect-uri (request-url-without-query env))))
       (oauth-middleware
        app

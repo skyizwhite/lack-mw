@@ -8,7 +8,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/timing
-                #:*timing*
+                #:*mw-timing*
                 #:set-metric
                 #:start-time
                 #:end-time
@@ -46,7 +46,7 @@
 
 (defparameter *app*
   (lack:builder
-   (with-args *timing* :total-description *total-description*)
+   (with-args *mw-timing* :total-description *total-description*)
    #'raw-app))
 
 (defun server-timing (headers)
@@ -86,8 +86,8 @@
 
   (testing "should not be enabled if the outer app has the timing middleware"
     (testing-app (lack:builder
-                  (with-args *timing* :total-description *total-description*)
-                  *timing*
+                  (with-args *mw-timing* :total-description *total-description*)
+                  *mw-timing*
                   #'raw-app)
       (multiple-value-bind (body status headers) (request "/")
         (declare (ignore body))
@@ -97,7 +97,7 @@
 
   (testing "duration format"
     (testing-app (lack:builder
-                  (with-args *timing* :total nil)
+                  (with-args *mw-timing* :total nil)
                   (lambda (env)
                     (set-metric env "custom" 23.8 "My custom Metric")
                     (set-metric env "precise" 1.23456 nil 3)
@@ -109,7 +109,7 @@
 
   (testing "auto-end option"
     (flet ((app (&rest args)
-             (lack:builder (apply #'with-args *timing* args)
+             (lack:builder (apply #'with-args *mw-timing* args)
                            (lambda (env) (start-time env "test") (ok-res "/")))))
       (testing-app (app)
         (multiple-value-bind (body status headers) (request "/")
@@ -125,10 +125,10 @@
   (testing "enabled function"
     (let ((called nil))
       (testing-app (lack:builder
-                    (with-args *timing* :enabled (lambda (env)
-                                                   (declare (ignore env))
-                                                   (setf called t)
-                                                   nil))
+                    (with-args *mw-timing* :enabled (lambda (env)
+                                                      (declare (ignore env))
+                                                      (setf called t)
+                                                      nil))
                     #'raw-app)
         (multiple-value-bind (body status headers) (request "/")
           (declare (ignore body))
@@ -138,7 +138,7 @@
 
   (testing "total nil and value-less metric without description"
     (testing-app (lack:builder
-                  (with-args *timing* :total nil)
+                  (with-args *mw-timing* :total nil)
                   (lambda (env) (set-metric env "test") (ok-res "/")))
       (multiple-value-bind (body status headers) (request "/")
         (declare (ignore body))
@@ -147,7 +147,7 @@
 
   (testing "cross-origin"
     (flet ((allow-origin (&rest args)
-             (testing-app (lack:builder (apply #'with-args *timing* args) #'raw-app)
+             (testing-app (lack:builder (apply #'with-args *mw-timing* args) #'raw-app)
                (multiple-value-bind (body status headers)
                    (request "/" :headers '(("origin" . "https://example.com")))
                  (declare (ignore body status))
@@ -167,7 +167,7 @@
       (ok (signals (end-time env "test") 'warning)))
     (let ((warned nil))
       (testing-app (lack:builder
-                    *timing*
+                    *mw-timing*
                     (lambda (env)
                       (handler-bind ((warning (lambda (w)
                                                 (setf warned (princ-to-string w))

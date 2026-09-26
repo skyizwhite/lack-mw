@@ -7,12 +7,12 @@
   (:import-from #:lack-mw/helpers/cookie
                 #:parse-cookie
                 #:serialize-cookie)
-  (:export #:*language*
+  (:export #:*mw-language*
            #:language))
 (in-package #:lack-mw/language)
 
 (defun language (env)
-  "Return the language detected by *LANGUAGE* for this request."
+  "Return the language detected by *MW-LANGUAGE* for this request."
   (getf env :lack-mw.language))
 
 (defparameter +detectors+ '(:querystring :cookie :header :path))
@@ -143,7 +143,7 @@
 (defun add-header (res key value)
   (list* (first res) (append (second res) (list key value)) (cddr res)))
 
-(defparameter *language*
+(defparameter *mw-language*
   (lambda (app &key (order '(:querystring :cookie :header))
                  (lookup-query-string "lang")
                  (lookup-cookie "language")

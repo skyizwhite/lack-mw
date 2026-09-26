@@ -3,7 +3,7 @@
   (:import-from #:ironclad)
   (:import-from #:babel)
   (:import-from #:cl-ppcre)
-  (:export #:*bearer-auth*
+  (:export #:*mw-bearer-auth*
            #:timing-safe-equal))
 (in-package #:lack-mw/bearer-auth)
 
@@ -104,7 +104,7 @@
         `(,status (:www-authenticate ,header :content-type "application/json")
                   (,(to-json message))))))
 
-(defparameter *bearer-auth*
+(defparameter *mw-bearer-auth*
   (lambda (app &key (token nil token-p)
                  verify-token
                  (realm "")

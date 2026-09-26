@@ -12,7 +12,7 @@ By default the `_method` form field is used:
   (:import-from #:ningle)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*method-override*
+                #:*mw-method-override*
                 #:with-args))
 (in-package #:app/main)
 
@@ -25,16 +25,16 @@ By default the `_method` form field is used:
 ;; </form>
 (defparameter *app*
   (lack:builder
-    *method-override*
+    *mw-method-override*
     *raw-app*))
 ```
 
 Other sources:
 
 ```lisp
-(with-args *method-override* :form "custom-input-name")
-(with-args *method-override* :header "X-HTTP-Method-Override")
-(with-args *method-override* :query "_method")   ; POST /posts/1?_method=DELETE
+(with-args *mw-method-override* :form "custom-input-name")
+(with-args *mw-method-override* :header "X-HTTP-Method-Override")
+(with-args *mw-method-override* :query "_method")   ; POST /posts/1?_method=DELETE
 ```
 
 ## Options

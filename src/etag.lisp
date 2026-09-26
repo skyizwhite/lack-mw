@@ -4,7 +4,7 @@
   (:import-from #:babel)
   (:import-from #:lack/util
                 #:funcall-with-cb)
-  (:export #:*etag*
+  (:export #:*mw-etag*
            #:+retained-304-headers+))
 (in-package #:lack-mw/etag)
 
@@ -70,7 +70,7 @@
         :when (member key retained :test #'string-equal)
           :append (list key val)))
 
-(defparameter *etag*
+(defparameter *mw-etag*
   (lambda (app &key (retained-headers +retained-304-headers+)
                  weak
                  (generate-digest #'sha1-digest))

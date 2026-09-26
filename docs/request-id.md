@@ -10,13 +10,13 @@ This middleware gives every request an id. Handlers can read it from the env, an
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*request-id*
+                #:*mw-request-id*
                 #:request-id))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *request-id* :header-name "X-Request-Id")
+    (with-args *mw-request-id* :header-name "X-Request-Id")
     (lambda (env)
       (format t "request id: ~A~%" (request-id env))
       '(200 (:content-type "text/plain") ("Hello")))))

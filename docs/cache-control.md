@@ -17,13 +17,13 @@ Immutable versioned assets, `no-store` for everything else, and keep what the ap
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*cache-control*
+                #:*mw-cache-control*
                 #:with-args))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *cache-control*
+    (with-args *mw-cache-control*
       :rules '(("/assets/" "public, max-age=31536000, immutable" :status (200)))
       :default "no-store")
     (:static :path "/assets/" :root #p"assets/")
@@ -43,7 +43,7 @@ Assets only: immutable when the URL is versioned (`?v=...` or a font), revalidat
 
 (defparameter *app*
   (lack:builder
-    (with-args *cache-control*
+    (with-args *mw-cache-control*
       :rules '((versioned-asset-p "public, max-age=31536000, immutable" :status (200 304))
                ("/assets/" "public, max-age=0, must-revalidate" :status (200 304)))
       :override t)

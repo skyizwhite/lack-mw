@@ -14,7 +14,7 @@
                 #:mw-every
                 #:mw-except
                 #:mw-condition
-                #:*ip-restriction*))
+                #:*mw-ip-restriction*))
 (in-package #:app/main)
 
 (defparameter *app*
@@ -23,7 +23,7 @@
     ;; pass directly, others must pass authentication and rate limiting.
     (mw-except '("/" "/public/*")
       (mw-some
-        (with-args *ip-restriction* :allow-list '("192.168.0.0/16"))
+        (with-args *mw-ip-restriction* :allow-list '("192.168.0.0/16"))
         (mw-every *my-auth* *my-rate-limit*)))
     *raw-app*))
 ```

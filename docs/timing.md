@@ -10,7 +10,7 @@ This middleware adds a [Server-Timing](https://developer.mozilla.org/en-US/docs/
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*timing*
+                #:*mw-timing*
                 #:set-metric
                 #:start-time
                 #:end-time
@@ -19,7 +19,7 @@ This middleware adds a [Server-Timing](https://developer.mozilla.org/en-US/docs/
 
 (defparameter *app*
   (lack:builder
-    (with-args *timing* :cross-origin t)
+    (with-args *mw-timing* :cross-origin t)
     (lambda (env)
       ;; value-less metric
       (set-metric env "region" "europe-west3")
@@ -60,7 +60,7 @@ The metric state is stored in the env under `:lack-mw.metric`.
 
 ## Note
 
-- Ported from Hono's `timing`. If an outer `*timing*` is already collecting metrics, an inner one only passes the request through.
+- Ported from Hono's `timing`. If an outer `*mw-timing*` is already collecting metrics, an inner one only passes the request through.
 - If the response already has a `Server-Timing` or `Timing-Allow-Origin` header, the new value is joined to it with `", "`, like `Headers#append`.
 - Hono's `console.warn` becomes `cl:warn`. You get a warning when the timing middleware is missing, or when you end a timer that does not exist.
 - `wrapTime` takes a Promise in Hono. Here it takes a function (`wrap-time`) or a body (`with-timing`).

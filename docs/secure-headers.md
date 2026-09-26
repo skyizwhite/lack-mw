@@ -10,13 +10,13 @@ This middleware sets security-related response headers, including an optional Co
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*secure-headers*
+                #:*mw-secure-headers*
                 #:secure-headers-nonce))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *secure-headers*
+    (with-args *mw-secure-headers*
       :x-frame-options "DENY"
       :strict-transport-security "max-age=63072000; includeSubDomains; preload"
       :content-security-policy '(:default-src ("'self'")
@@ -33,7 +33,7 @@ This middleware sets security-related response headers, including an optional Co
                       (secure-headers-nonce env)))))))
 ```
 
-Plain `*secure-headers*` sets the default headers listed below.
+Plain `*mw-secure-headers*` sets the default headers listed below.
 
 ## Options
 

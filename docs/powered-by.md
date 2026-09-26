@@ -10,13 +10,13 @@ This middleware sets the `X-Powered-By` response header.
   (:import-from #:lack)
   (:import-from #:lack-mw
                 #:with-args
-                #:*powered-by*))
+                #:*mw-powered-by*))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    *powered-by*                                  ; X-Powered-By: Lack
-    ;; or: (with-args *powered-by* :server-name "My Server")
+    *mw-powered-by*                                  ; X-Powered-By: Lack
+    ;; or: (with-args *mw-powered-by* :server-name "My Server")
     (lambda (env)
       (declare (ignore env))
       '(200 (:content-type "text/plain") ("Hello")))))

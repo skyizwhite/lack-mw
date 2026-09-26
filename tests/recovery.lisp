@@ -9,7 +9,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/recovery
-                #:*recovery*)
+                #:*mw-recovery*)
   (:import-from #:lack-mw/helpers/escape
                 #:escape-html
                 #:escape-json))
@@ -28,7 +28,7 @@
   '(200 (:content-type "text/plain") ("ok")))
 
 (defun recovery (app &rest args)
-  (lack:builder (apply #'with-args *recovery* (append args '(:logger nil))) app))
+  (lack:builder (apply #'with-args *mw-recovery* (append args '(:logger nil))) app))
 
 (defmacro with-response ((body &optional (status (gensym)) (headers (gensym)))
                          (app &optional (path "/")) &body forms)
@@ -65,7 +65,7 @@
     (ok (string= body "Internal Server Error"))))
 
 (deftest invalid-format
-  (ok (signals (funcall *recovery* #'ok-app :format :xml))))
+  (ok (signals (funcall *mw-recovery* #'ok-app :format :xml))))
 
 (deftest dev-mode-html
   (with-response (body status) ((recovery (failing-app "<script>alert(1)</script>") :dev-mode t))
@@ -103,7 +103,7 @@
 (deftest logger
   (let (calls)
     (testing-app (lack:builder
-                  (with-args *recovery*
+                  (with-args *mw-recovery*
                     :logger (lambda (condition backtrace env)
                               (push (list condition backtrace env) calls)))
                   (lambda (env) (declare (ignore env)) (error 'custom-error)))
@@ -118,7 +118,7 @@
 (deftest default-logger
   (let* ((output (make-string-output-stream))
          (*error-output* output))
-    (with-response (body status) ((lack:builder *recovery* (failing-app "logged message"))
+    (with-response (body status) ((lack:builder *mw-recovery* (failing-app "logged message"))
                                   "/path")
       (ok (eql status 500))
       (ng (search "logged message" body)))
@@ -134,9 +134,9 @@
     (ok (string= (get-output-stream-string output) ""))))
 
 (deftest failing-logger
-  (testing-app (lack:builder (with-args *recovery* :logger (lambda (&rest args)
-                                                             (declare (ignore args))
-                                                             (error "logger broke")))
+  (testing-app (lack:builder (with-args *mw-recovery* :logger (lambda (&rest args)
+                                                                (declare (ignore args))
+                                                                (error "logger broke")))
                              (failing-app))
     (ok (eql (nth-value 1 (request "/")) 500))))
 
@@ -214,7 +214,7 @@
          (*error-output* output)
          (circular (list 1 2)))
     (setf (cdr (last circular)) circular)
-    (with-response (body status) ((lack:builder (with-args *recovery* :format :text :dev-mode t)
+    (with-response (body status) ((lack:builder (with-args *mw-recovery* :format :text :dev-mode t)
                                                 (lambda (env)
                                                   (declare (ignore env))
                                                   (error "bad ~A" circular))))
@@ -252,11 +252,11 @@
 
 (deftest default-options
   (let ((*error-output* (make-broadcast-stream)))
-    (with-response (body status headers) ((lack:builder *recovery* (failing-app "hidden")))
+    (with-response (body status headers) ((lack:builder *mw-recovery* (failing-app "hidden")))
       (ok (eql status 500))
       (ok (string= (gethash "content-type" headers) "text/html; charset=utf-8"))
       (ok (search "Internal Server Error" body))
       (ng (search "hidden" body)))
-    (with-response (body status) ((lack:builder *recovery* #'ok-app))
+    (with-response (body status) ((lack:builder *mw-recovery* #'ok-app))
       (ok (eql status 200))
       (ok (string= body "ok")))))

@@ -7,7 +7,7 @@
   (:import-from #:lack/request
                 #:make-request
                 #:request-body-parameters)
-  (:export #:*method-override*))
+  (:export #:*mw-method-override*))
 (in-package #:lack-mw/method-override)
 
 (defun method-keyword (name)
@@ -56,7 +56,7 @@
                :request-uri (format nil "~a~@[?~a~]" path new-query)
                env)))))
 
-(defparameter *method-override*
+(defparameter *mw-method-override*
   (lambda (app &key form header query)
     (lambda (env)
       (funcall app

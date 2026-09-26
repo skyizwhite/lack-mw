@@ -8,7 +8,7 @@
                 #:verify-jwt
                 #:extract-token
                 #:unauthorized-response)
-  (:export #:*jwk*
+  (:export #:*mw-jwk*
            #:jwt-payload))
 (in-package #:lack-mw/jwk)
 
@@ -35,7 +35,7 @@
                               (error () (return-from verify-with-keys nil)))))
             (verify-jwt token public-key alg verification)))))))
 
-(defparameter *jwk*
+(defparameter *mw-jwk*
   (lambda (app &key keys allow-anon cookie (header-name "Authorization") alg realm verification)
     (unless keys
       (error "JWK auth middleware requires options for \"keys\""))

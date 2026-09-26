@@ -18,20 +18,20 @@ For the token-based CSRF protection, see Lack's own `lack/middleware/csrf`.
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*csrf*
+                #:*mw-csrf*
                 #:with-args))
 (in-package #:app/main)
 
 ;; Default: only same-origin requests
 (defparameter *app*
   (lack:builder
-    *csrf*
+    *mw-csrf*
     *raw-app*))
 
 ;; Allow specific origins and Sec-Fetch-Site values
 (defparameter *app2*
   (lack:builder
-    (with-args *csrf*
+    (with-args *mw-csrf*
       :origin '("https://app.example.com" "https://admin.example.com")
       :sec-fetch-site '("same-origin" "same-site"))
     *raw-app*))
@@ -39,7 +39,7 @@ For the token-based CSRF protection, see Lack's own `lack/middleware/csrf`.
 ;; Dynamic check: also accept cross-site webhooks
 (defparameter *app3*
   (lack:builder
-    (with-args *csrf*
+    (with-args *mw-csrf*
       :sec-fetch-site (lambda (value env)
                         (or (string= value "same-origin")
                             (alexandria:starts-with-subseq "/webhook/" (getf env :path-info)))))

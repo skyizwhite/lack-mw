@@ -14,7 +14,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/jwk
-                #:*jwk*
+                #:*mw-jwk*
                 #:jwt-payload)
   (:import-from #:lack-mw/jwt
                 #:jwk-get))
@@ -54,7 +54,7 @@
         (,(or (cdr (assoc "message" (jwt-payload env) :test #'string=)) "no message"))))
 
 (defun build (&rest options)
-  (lack:builder (apply #'with-args *jwk* options) #'payload-app))
+  (lack:builder (apply #'with-args *mw-jwk* options) #'payload-app))
 
 (defmacro with-response ((body status headers) (app path &rest request-args) &body forms)
   `(testing-app ,app
@@ -66,9 +66,9 @@
   `((,name . ,(format nil "~A ~A" scheme token))))
 
 (deftest options
-  (ok (signals (funcall *jwk* #'payload-app :alg '("RS256"))))
-  (ok (signals (funcall *jwk* #'payload-app :keys *public-jwks*)))
-  (ok (signals (funcall *jwk* #'payload-app :keys *public-jwks* :alg '("HS256")))))
+  (ok (signals (funcall *mw-jwk* #'payload-app :alg '("RS256"))))
+  (ok (signals (funcall *mw-jwk* #'payload-app :keys *public-jwks*)))
+  (ok (signals (funcall *mw-jwk* #'payload-app :keys *public-jwks* :alg '("HS256")))))
 
 (deftest allow-anon
   (let ((app (build :keys *public-jwks* :alg '("RS256") :allow-anon t)))

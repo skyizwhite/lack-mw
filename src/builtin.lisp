@@ -26,31 +26,31 @@
                 #:*lack-middleware-static*)
   (:import-from #:lack/middleware/when
                 #:*lack-middleware-when*)
-  (:export #:*accesslog*
+  (:export #:*mw-accesslog*
            #:*time-format*
            #:default-formatter
-           #:*basic-auth*
-           #:*backtrace*
-           #:*session-csrf*
+           #:*mw-basic-auth*
+           #:*mw-backtrace*
+           #:*mw-session-csrf*
            #:csrf-token
            #:csrf-html-tag
-           #:*mount*
-           #:*session*
+           #:*mw-mount*
+           #:*mw-session*
            #:make-cookie-state
            #:make-memory-store
-           #:*static*
-           #:*when*))
+           #:*mw-static*
+           #:*mw-when*))
 (in-package #:lack-mw/builtin)
 
 ;;; Lack's built-in middlewares under shorter names. Each looks the original up on
 ;;; every call, so redefining it in Lack is picked up here.
 
-(defparameter *accesslog* (with-args '*lack-middleware-accesslog*))
-(defparameter *basic-auth* (with-args '*lack-middleware-auth-basic*))
-(defparameter *backtrace* (with-args '*lack-middleware-backtrace*))
-;; token based, kept apart from lack-mw's Origin based *csrf*
-(defparameter *session-csrf* (with-args '*lack-middleware-csrf*))
-(defparameter *mount* (with-args '*lack-middleware-mount*))
-(defparameter *session* (with-args '*lack-middleware-session*))
-(defparameter *static* (with-args '*lack-middleware-static*))
-(defparameter *when* (with-args '*lack-middleware-when*))
+(defparameter *mw-accesslog* (with-args '*lack-middleware-accesslog*))
+(defparameter *mw-basic-auth* (with-args '*lack-middleware-auth-basic*))
+(defparameter *mw-backtrace* (with-args '*lack-middleware-backtrace*))
+;; token based, kept apart from lack-mw's Origin based *mw-csrf*
+(defparameter *mw-session-csrf* (with-args '*lack-middleware-csrf*))
+(defparameter *mw-mount* (with-args '*lack-middleware-mount*))
+(defparameter *mw-session* (with-args '*lack-middleware-session*))
+(defparameter *mw-static* (with-args '*lack-middleware-static*))
+(defparameter *mw-when* (with-args '*lack-middleware-when*))

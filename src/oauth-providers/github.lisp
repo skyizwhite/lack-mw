@@ -9,14 +9,14 @@
                 #:oauth-error
                 #:fetch-json
                 #:query-string)
-  (:export #:*github-auth*
+  (:export #:*mw-github-auth*
            #:github-user))
 (in-package #:lack-mw/oauth-providers/github)
 
 (defparameter +user-agent+ "lack-mw")
 
 (defun github-user (env)
-  "The GitHub user signed in with *GITHUB-AUTH*, as a hash table of the API's JSON,
+  "The GitHub user signed in with *MW-GITHUB-AUTH*, as a hash table of the API's JSON,
 its \"email\" set to the primary address."
   (getf env :lack-mw.github-user))
 
@@ -84,7 +84,7 @@ its \"email\" set to the primary address."
     (setf (gethash "email" user) (primary-email token))
     (list* :user user result)))
 
-(defparameter *github-auth*
+(defparameter *mw-github-auth*
   (lambda (app &key client-id client-secret scope oauth-app redirect-uri)
     (oauth-middleware
      app

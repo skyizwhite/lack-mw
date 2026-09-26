@@ -9,7 +9,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/cache-control
-                #:*cache-control*))
+                #:*mw-cache-control*))
 (in-package #:lack-mw-test/cache-control)
 
 (defparameter *immutable* "public, max-age=31536000, immutable")
@@ -31,12 +31,12 @@
 
 (deftest cache-control
   (testing "no rules, no default: nothing set"
-    (testing-app (lack:builder *cache-control* #'app)
+    (testing-app (lack:builder *mw-cache-control* #'app)
       (ok (null (cache-control-of "/")))))
 
   (testing "koya"
     (testing-app (lack:builder
-                  (with-args *cache-control*
+                  (with-args *mw-cache-control*
                     :rules `(("/assets/" ,*immutable* :status (200)))
                     :default "no-store")
                   #'app)
@@ -51,7 +51,7 @@
              (or (uiop:string-prefix-p "v=" (or (getf env :query-string) ""))
                  (uiop:string-prefix-p "/assets/fonts/" (getf env :path-info)))))
       (testing-app (lack:builder
-                    (with-args *cache-control*
+                    (with-args *mw-cache-control*
                       :rules `((,(lambda (env res)
                                    (and (uiop:string-prefix-p "/assets/" (getf env :path-info))
                                         (versioned-p env res)))
@@ -69,7 +69,7 @@
 
   (testing "first match wins, value functions"
     (testing-app (lack:builder
-                  (with-args *cache-control*
+                  (with-args *mw-cache-control*
                     :rules (list (list "/a" (lambda (env res)
                                               (declare (ignore env))
                                               (format nil "max-age=~a" (first res))))
@@ -83,14 +83,14 @@
 
   (testing "override replaces the app's value"
     (testing-app (lack:builder
-                  (with-args *cache-control* :default "no-store" :override t)
+                  (with-args *mw-cache-control* :default "no-store" :override t)
                   #'app)
       (multiple-value-bind (body status headers) (request "/media/a.png")
         (declare (ignore body status))
         (ok (string= (gethash "cache-control" headers) "no-store")))))
 
   (testing "delayed responses"
-    (let ((mw (funcall *cache-control*
+    (let ((mw (funcall *mw-cache-control*
                        (lambda (env)
                          (declare (ignore env))
                          (lambda (responder) (funcall responder '(200 ()))))

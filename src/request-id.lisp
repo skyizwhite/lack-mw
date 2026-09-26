@@ -3,13 +3,13 @@
   (:import-from #:lack/util
                 #:funcall-with-cb)
   (:import-from #:ironclad)
-  (:export #:*request-id*
+  (:export #:*mw-request-id*
            #:request-id
            #:generate-uuid))
 (in-package #:lack-mw/request-id)
 
 (defun request-id (env)
-  "Return the request id assigned by *request-id*."
+  "Return the request id assigned by *mw-request-id*."
   (getf env :lack-mw.request-id))
 
 (defun generate-uuid ()
@@ -27,7 +27,7 @@
   (or (char<= #\a c #\z) (char<= #\A c #\Z) (char<= #\0 c #\9)
       (member c '(#\_ #\- #\=))))
 
-(defparameter *request-id*
+(defparameter *mw-request-id*
   (lambda (app &key (limit-length 255)
                  (header-name "X-Request-Id")
                  (generator (lambda (env)

@@ -18,10 +18,10 @@
                 #:oauth-granted-scopes
                 #:generate-state)
   (:import-from #:lack-mw/oauth-providers/github
-                #:*github-auth*
+                #:*mw-github-auth*
                 #:github-user)
   (:import-from #:lack-mw/oauth-providers/google
-                #:*google-auth*
+                #:*mw-google-auth*
                 #:google-user
                 #:google-revoke-token))
 (in-package #:lack-mw-test/oauth-providers)
@@ -131,12 +131,12 @@
 
 (deftest google-auth
   (let ((app (lack:builder
-              (with-args *google-auth*
+              (with-args *mw-google-auth*
                 :client-id "google-id" :client-secret "google-secret"
                 :scope '("openid" "email" "profile"))
               (report-app #'google-user)))
         (custom (lack:builder
-                 (with-args *google-auth*
+                 (with-args *mw-google-auth*
                    :client-id "google-id" :client-secret "google-secret"
                    :scope '("openid" "email" "profile")
                    :redirect-uri "http://localhost:3000/google"
@@ -212,7 +212,7 @@
           (ok (string= (form-value content "redirect_uri") "http://localhost/google"))
           (ok (string= (form-value content "grant_type") "authorization_code")))))
     (testing "requires a scope"
-      (ok (signals (funcall *google-auth* (report-app #'google-user)))))
+      (ok (signals (funcall *mw-google-auth* (report-app #'google-user)))))
     (testing "revokes a token"
       (with-fake-providers
         (ok (google-revoke-token +access-token+))
@@ -220,15 +220,15 @@
 
 (deftest github-auth
   (let ((github-app (lack:builder
-                     (with-args *github-auth* :client-id "github-id" :client-secret "github-secret")
+                     (with-args *mw-github-auth* :client-id "github-id" :client-secret "github-secret")
                      (report-app #'github-user)))
         (github-app-custom (lack:builder
-                            (with-args *github-auth*
+                            (with-args *mw-github-auth*
                               :client-id "github-id" :client-secret "github-secret"
                               :redirect-uri "http://localhost:3000/github/app")
                             (report-app #'github-user)))
         (oauth-app (lack:builder
-                    (with-args *github-auth*
+                    (with-args *mw-github-auth*
                       :client-id "github-id" :client-secret "github-secret"
                       :scope '("public_repo" "read:user" "user" "user:email" "user:follow")
                       :oauth-app t)

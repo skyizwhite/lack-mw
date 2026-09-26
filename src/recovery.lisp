@@ -3,7 +3,7 @@
   (:import-from #:lack-mw/helpers/escape
                 #:escape-html
                 #:escape-json)
-  (:export #:*recovery*))
+  (:export #:*mw-recovery*))
 (in-package #:lack-mw/recovery)
 
 (defun content-type (format)
@@ -67,7 +67,7 @@ unwinds and returns the result of calling HANDLE with the condition and it."
           (return-from call-with-recovery (funcall thunk))))
     (funcall handle condition backtrace)))
 
-(defparameter *recovery*
+(defparameter *mw-recovery*
   (lambda (app &key (format :html) dev-mode (logger #'default-logger) on-error)
     (check-type format (member :html :json :text))
     (labels ((log-error (condition backtrace env)

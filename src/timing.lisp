@@ -2,7 +2,7 @@
   (:use #:cl)
   (:import-from #:lack/util
                 #:funcall-with-cb)
-  (:export #:*timing*
+  (:export #:*mw-timing*
            #:set-metric
            #:start-time
            #:end-time
@@ -22,7 +22,7 @@
 (defun env-metric (env)
   (or (getf env :lack-mw.metric)
       (progn
-        (warn "Metrics not initialized! Please add the `*timing*` middleware to this route!")
+        (warn "Metrics not initialized! Please add the `*mw-timing*` middleware to this route!")
         nil)))
 
 (defun set-metric (env name &optional value-or-description description precision)
@@ -84,7 +84,7 @@
           headers)
         (append headers (list key value)))))
 
-(defparameter *timing*
+(defparameter *mw-timing*
   (lambda (app &key (total t)
                  (enabled t)
                  (total-description "Total Response Time")
@@ -92,7 +92,7 @@
                  (cross-origin nil))
     (lambda (env)
       (if (getf env :lack-mw.metric)
-          ;; an outer *timing* is already collecting metrics
+          ;; an outer *mw-timing* is already collecting metrics
           (funcall app env)
           (let* ((metrics (make-metric))
                  (env (list* :lack-mw.metric metrics env)))

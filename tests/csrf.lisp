@@ -13,7 +13,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/csrf
-                #:*csrf*))
+                #:*mw-csrf*))
 (in-package #:lack-mw-test/csrf)
 
 (defvar *called* nil)
@@ -44,7 +44,7 @@
   (and (ppcre:scan "^https://(\\w+\\.)?example\\.com$" origin) t))
 
 (deftest simple-usage
-  (let ((app (lack:builder *csrf* #'post-app)))
+  (let ((app (lack:builder *mw-csrf* #'post-app)))
     (testing "safe methods are always allowed"
       (dolist (method '(:get :head :options))
         (ok (= (post app "http://localhost/form" :method method :content nil) 200))))
@@ -107,7 +107,7 @@
 
 (deftest origin-option
   (testing "string"
-    (let ((app (lack:builder (with-args *csrf* :origin "https://example.com") #'post-app)))
+    (let ((app (lack:builder (with-args *mw-csrf* :origin "https://example.com") #'post-app)))
       (ok (= (post app "https://example.com/form" :origin "https://example.com") 200))
       (multiple-value-bind (status body called)
           (post app "https://example.jp/form" :origin "https://example.jp")
@@ -117,14 +117,14 @@
 
   (testing "list"
     (let ((app (lack:builder
-                (with-args *csrf* :origin '("https://example.com" "https://hono.example.com"))
+                (with-args *mw-csrf* :origin '("https://example.com" "https://hono.example.com"))
                 #'post-app)))
       (ok (= (post app "https://hono.example.com/form" :origin "https://hono.example.com") 200))
       (ok (= (post app "https://example.com/form" :origin "https://example.com") 200))
       (ok (= (post app "http://example.jp/form" :origin "http://example.jp") 403))))
 
   (testing "function"
-    (let ((app (lack:builder (with-args *csrf* :origin #'ends-with-example-com-p) #'post-app)))
+    (let ((app (lack:builder (with-args *mw-csrf* :origin #'ends-with-example-com-p) #'post-app)))
       (ok (= (post app "https://hono.example.com/form" :origin "https://hono.example.com") 200))
       (ok (= (post app "https://example.com/form" :origin "https://example.com") 200))
       (ok (= (post app "http://honojs.hono.example.jp/form" :origin "http://example.jp") 403))
@@ -132,18 +132,18 @@
 
 (deftest sec-fetch-site-option
   (testing "string"
-    (let ((app (lack:builder (with-args *csrf* :sec-fetch-site "same-origin") #'post-app)))
+    (let ((app (lack:builder (with-args *mw-csrf* :sec-fetch-site "same-origin") #'post-app)))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "same-origin") 200))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "cross-site") 403))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "any") 403))))
 
   (testing "default allows same-origin"
-    (let ((app (lack:builder *csrf* #'post-app)))
+    (let ((app (lack:builder *mw-csrf* #'post-app)))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "same-origin") 200))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "same-site") 403))))
 
   (testing "list"
-    (let ((app (lack:builder (with-args *csrf* :sec-fetch-site '("same-origin" "none"))
+    (let ((app (lack:builder (with-args *mw-csrf* :sec-fetch-site '("same-origin" "none"))
                              #'post-app)))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "same-origin") 200))
       (ok (= (post app "http://localhost/form" :sec-fetch-site "none") 200))
@@ -151,7 +151,7 @@
 
   (testing "function"
     (let ((app (lack:builder
-                (with-args *csrf*
+                (with-args *mw-csrf*
                   :sec-fetch-site (lambda (value env)
                                     (or (string= value "same-origin")
                                         (alexandria:starts-with-subseq

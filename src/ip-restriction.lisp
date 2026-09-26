@@ -1,7 +1,7 @@
 (defpackage #:lack-mw/ip-restriction
   (:use #:cl)
   (:import-from #:cl-ppcre)
-  (:export #:*ip-restriction*))
+  (:export #:*mw-ip-restriction*))
 (in-package #:lack-mw/ip-restriction)
 
 ;;; IP address parsing
@@ -156,7 +156,7 @@
 (defun forbidden ()
   (list 403 (list :content-type "text/plain; charset=UTF-8") (list "Forbidden")))
 
-(defparameter *ip-restriction*
+(defparameter *mw-ip-restriction*
   (lambda (app &key deny-list allow-list
                  (get-ip (lambda (env) (getf env :remote-addr)))
                  on-error)

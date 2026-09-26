@@ -8,7 +8,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/powered-by
-                #:*powered-by*))
+                #:*mw-powered-by*))
 (in-package #:lack-mw-test/powered-by)
 
 (defun raw-app (env)
@@ -17,28 +17,28 @@
 
 (deftest powered-by
   (testing "should return with X-Powered-By header"
-    (testing-app (lack:builder *powered-by* #'raw-app)
+    (testing-app (lack:builder *mw-powered-by* #'raw-app)
       (multiple-value-bind (body status headers) (request "/")
         (ok (string= body "root"))
         (ok (eql status 200))
         (ok (string= (gethash "x-powered-by" headers) "Lack")))))
 
   (testing "should not return duplicate values"
-    (testing-app (lack:builder *powered-by* *powered-by* #'raw-app)
+    (testing-app (lack:builder *mw-powered-by* *mw-powered-by* #'raw-app)
       (multiple-value-bind (body status headers) (request "/")
         (declare (ignore body))
         (ok (eql status 200))
         (ok (string= (gethash "x-powered-by" headers) "Lack")))))
 
   (testing "should return custom server-name"
-    (testing-app (lack:builder (with-args *powered-by* :server-name "Foo") #'raw-app)
+    (testing-app (lack:builder (with-args *mw-powered-by* :server-name "Foo") #'raw-app)
       (multiple-value-bind (body status headers) (request "/")
         (declare (ignore body))
         (ok (eql status 200))
         (ok (string= (gethash "x-powered-by" headers) "Foo")))))
 
   (testing "delayed response"
-    (let* ((app (funcall *powered-by*
+    (let* ((app (funcall *mw-powered-by*
                          (lambda (env)
                            (declare (ignore env))
                            (lambda (responder)

@@ -53,7 +53,7 @@ exec ros -Q -- $0 "$@"
   ")
     (write-list all stream)
     (format stream "
-  \"User agents of known AI bots, to pass as :blocklist to *ua-blocker*.\")
+  \"User agents of known AI bots, to pass as :blocklist to *mw-ua-blocker*.\")
 
 (defparameter +non-respecting-ai-bots+
   ")

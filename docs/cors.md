@@ -9,13 +9,13 @@ This middleware adds the CORS (Cross-Origin Resource Sharing) headers to respons
   (:use #:cl)
   (:import-from #:lack)
   (:import-from #:lack-mw
-                #:*cors*
+                #:*mw-cors*
                 #:with-args))
 (in-package #:app/main)
 
 (defparameter *app*
   (lack:builder
-    (with-args *cors*
+    (with-args *mw-cors*
       :origin "http://example.com"
       :allow-headers '("X-Custom-Header" "Upgrade-Insecure-Requests")
       :allow-methods '("POST" "GET" "OPTIONS")
@@ -27,16 +27,16 @@ This middleware adds the CORS (Cross-Origin Resource Sharing) headers to respons
       '(200 (:content-type "application/json") ("{\"success\":true}")))))
 ```
 
-With all defaults (`Access-Control-Allow-Origin: *`), pass `*cors*` as is:
+With all defaults (`Access-Control-Allow-Origin: *`), pass `*mw-cors*` as is:
 
 ```lisp
-(lack:builder *cors* *raw-app*)
+(lack:builder *mw-cors* *raw-app*)
 ```
 
 An origin can be chosen per request by a function:
 
 ```lisp
-(with-args *cors*
+(with-args *mw-cors*
   :origin (lambda (origin env)
             (declare (ignore env))
             (if (alexandria:ends-with-subseq ".example.com" origin)

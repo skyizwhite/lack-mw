@@ -3,8 +3,8 @@
   (:import-from #:cl-ppcre)
   (:import-from #:lack-mw/ua-blocker/ai-bots
                 #:+ai-robots-txt+)
-  (:export #:*ua-blocker*
-           #:*ai-robots-txt*))
+  (:export #:*mw-ua-blocker*
+           #:*mw-ai-robots-txt*))
 (in-package #:lack-mw/ua-blocker)
 
 (defun blocklist-scanner (blocklist)
@@ -18,7 +18,7 @@ the upcased User-Agent, or a regex string or scanner run on it as is."
                            blocklist))))
     ((or string function) (ppcre:create-scanner blocklist))))
 
-(defparameter *ua-blocker*
+(defparameter *mw-ua-blocker*
   (lambda (app &key blocklist)
     (let ((scanner (blocklist-scanner blocklist)))
       (lambda (env)
@@ -30,7 +30,7 @@ the upcased User-Agent, or a regex string or scanner run on it as is."
   "Middleware answering 403 to requests whose User-Agent matches :BLOCKLIST.
 A regex blocklist should match on UPPERCASE user agents.")
 
-(defparameter *ai-robots-txt*
+(defparameter *mw-ai-robots-txt*
   (lambda (app &key (path "/robots.txt"))
     (lambda (env)
       (if (string= (getf env :path-info) path)

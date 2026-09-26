@@ -188,7 +188,7 @@
     "YiyanBot"
     "YouBot"
     "ZanistaBot")
-  "User agents of known AI bots, to pass as :blocklist to *ua-blocker*.")
+  "User agents of known AI bots, to pass as :blocklist to *mw-ua-blocker*.")
 
 (defparameter +non-respecting-ai-bots+
   '("AddSearchBot"

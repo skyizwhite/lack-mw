@@ -13,7 +13,7 @@
   (:import-from #:lack-mw/utils
                 #:with-args)
   (:import-from #:lack-mw/jwt
-                #:*jwt*
+                #:*mw-jwt*
                 #:jwt-payload
                 #:jwk-get
                 #:jwk-to-key))
@@ -57,7 +57,7 @@
         (,(or (cdr (assoc "message" (jwt-payload env) :test #'string=)) "no message"))))
 
 (defun build (&rest options)
-  (lack:builder (apply #'with-args *jwt* options) #'payload-app))
+  (lack:builder (apply #'with-args *mw-jwt* options) #'payload-app))
 
 (defmacro with-response ((body status headers) (app path &rest request-args) &body forms)
   `(testing-app ,app
@@ -178,9 +178,9 @@
 
 (deftest options
   (testing "secret and alg are required"
-    (ok (signals (funcall *jwt* #'payload-app :alg "HS256")))
-    (ok (signals (funcall *jwt* #'payload-app :secret "a-secret")))
-    (ok (signals (funcall *jwt* #'payload-app :secret "a-secret" :alg "XX999"))))
+    (ok (signals (funcall *mw-jwt* #'payload-app :alg "HS256")))
+    (ok (signals (funcall *mw-jwt* #'payload-app :secret "a-secret")))
+    (ok (signals (funcall *mw-jwt* #'payload-app :secret "a-secret" :alg "XX999"))))
   (testing "mismatched algorithm is rejected"
     (with-response (body status headers)
         ((build :secret "a-secret" :alg "RS256") "/" :headers (bearer *credential*))
