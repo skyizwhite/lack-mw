@@ -1,5 +1,5 @@
 (defsystem "lack-mw"
-  :version "0.3.0"
+  :version "0.4.0"
   :description "Middleware collection for Lack"
   :author "Akira Tempaku"
   :maintainer "Akira Tempaku <paku@skyizwhite.dev>"
