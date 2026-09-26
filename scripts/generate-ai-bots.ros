@@ -1,0 +1,79 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+;;; Regenerates src/ua-blocker/ai-bots.lisp from ai.robots.txt's robots.json.
+;;;
+;;;   qlot exec ros scripts/generate-ai-bots.ros [robots.json]
+;;;
+;;; Without an argument, robots.json is downloaded with curl.
+(progn
+  (ros:ensure-asdf)
+  (ql:quickload :yason :silent t))
+
+(defpackage #:ros.script.generate-ai-bots
+  (:use #:cl))
+(in-package #:ros.script.generate-ai-bots)
+
+(defparameter *robots-json-url*
+  "https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/main/robots.json")
+
+(defparameter *output*
+  (merge-pathnames "../src/ua-blocker/ai-bots.lisp"
+                   (make-pathname :name nil :type nil :defaults *load-truename*)))
+
+(defun read-robots-json (path)
+  (let ((text (if path
+                  (uiop:read-file-string path)
+                  (uiop:run-program (list "curl" "-fsSL" *robots-json-url*) :output :string))))
+    ;; an alist keeps the bots in the file's order
+    (yason:parse text :object-as :alist)))
+
+(defun respects-robots-txt-p (info)
+  (let ((respect (cdr (assoc "respect" info :test #'string=))))
+    (and (stringp respect) (search "Yes" respect))))
+
+(defun write-list (names stream)
+  (format stream "'(~{~s~^~%    ~})" names))
+
+(defun generate (bots stream)
+  (let ((all (mapcar #'car bots))
+        (non-respecting (mapcar #'car (remove-if (lambda (bot) (respects-robots-txt-p (cdr bot))) bots))))
+    (format stream ";;; Generated from ai.robots.txt (https://github.com/ai-robots-txt/ai.robots.txt)
+;;; by scripts/generate-ai-bots.ros. Do not edit by hand.
+(defpackage #:lack-mw/ua-blocker/ai-bots
+  (:use #:cl)
+  (:export #:+ai-bots+
+           #:+non-respecting-ai-bots+
+           #:+ai-robots-txt+))
+(in-package #:lack-mw/ua-blocker/ai-bots)
+
+(defparameter +ai-bots+
+  ")
+    (write-list all stream)
+    (format stream "
+  \"User agents of known AI bots, to pass as :blocklist to *ua-blocker*.\")
+
+(defparameter +non-respecting-ai-bots+
+  ")
+    (write-list non-respecting stream)
+    (format stream "
+  \"The part of +AI-BOTS+ not known to respect robots.txt.\")
+
+(defparameter +ai-robots-txt+
+  ~s
+  \"robots.txt content disallowing every bot in +AI-BOTS+.\")
+"
+            (format nil "~{User-agent: ~a~%~}Disallow: /~%" all))
+    (values (length all) (length non-respecting))))
+
+(defun main (&optional path &rest argv)
+  (declare (ignore argv))
+  (let ((bots (read-robots-json path)))
+    (multiple-value-bind (all non-respecting)
+        (with-open-file (out *output* :direction :output :if-exists :supersede
+                                      :external-format :utf-8)
+          (generate bots out))
+      (format t "Wrote ~a: ~d bots, ~d not respecting robots.txt~%"
+              (enough-namestring (truename *output*)) all non-respecting))))

@@ -1,23 +1,23 @@
 ("quicklisp" .
  (:class qlot/source/dist:source-dist
   :initargs (:distribution "https://beta.quicklisp.org/dist/quicklisp.txt" :%version :latest)
-  :version "2024-10-12"))
+  :version "2026-01-01"))
 ("lack" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
-  :version "ql-2024-10-12"))
+  :version "ql-2026-01-01"))
 ("quri" .
  (:class qlot/source/ql:source-ql
   :initargs (:%version :latest)
-  :version "ql-2024-10-12"))
+  :version "ql-2026-01-01"))
 ("rove" .
  (:class qlot/source/git:source-git
   :initargs (:remote-url "https://github.com/fukamachi/rove")
-  :version "git-cacea7331c10fe9d8398d104b2dfd579bf7ea353"))
+  :version "git-52b04eaa4a079d753fdf49e793a52d5fe1f61836"))
 ("dissect" .
  (:class qlot/source/git:source-git
   :initargs (:remote-url "https://github.com/Shinmera/dissect")
-  :version "git-a70cabcd748cf7c041196efd711e2dcca2bbbb2c"))
+  :version "git-43b42a3a4d2264b78690a2e9ee1cc15538718ca6"))
 ("ningle" .
  (:class qlot/source/git:source-git
   :initargs (:remote-url "https://github.com/fukamachi/ningle")

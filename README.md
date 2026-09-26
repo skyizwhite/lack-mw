@@ -4,8 +4,26 @@ Middleware collection for [Lack](https://github.com/fukamachi/lack).
 
 ## Middlewares
 
+- [Lack built-in middlewares](/docs/builtin.md) (re-exported under shorter names)
+- [bearer-auth](/docs/bearer-auth.md)
+- [body-limit](/docs/body-limit.md)
+- [cache-control](/docs/cache-control.md)
+- [combine](/docs/combine.md)
+- [cors](/docs/cors.md)
+- [csrf](/docs/csrf.md)
+- [etag](/docs/etag.md)
+- [ip-restriction](/docs/ip-restriction.md)
+- [jwk](/docs/jwk.md)
+- [jwt](/docs/jwt.md)
+- [language](/docs/language.md)
+- [method-override](/docs/method-override.md)
+- [powered-by](/docs/powered-by.md)
+- [request-id](/docs/request-id.md)
+- [secure-headers](/docs/secure-headers.md)
+- [temporary-file](/docs/temporary-file.md)
+- [timing](/docs/timing.md)
 - [trailing-slash](/docs/trailing-slash.md)
-- Coming soon...
+- [ua-blocker](/docs/ua-blocker.md)
 
 ## License
 

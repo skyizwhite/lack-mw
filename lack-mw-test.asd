@@ -2,5 +2,24 @@
   :class :package-inferred-system
   :pathname "tests"
   :depends-on ("rove"
-               "lack-mw-test/trailing-slash")
+               "lack-mw-test/builtin"
+               "lack-mw-test/bearer-auth"
+               "lack-mw-test/body-limit"
+               "lack-mw-test/cache-control"
+               "lack-mw-test/combine"
+               "lack-mw-test/cors"
+               "lack-mw-test/csrf"
+               "lack-mw-test/etag"
+               "lack-mw-test/ip-restriction"
+               "lack-mw-test/jwk"
+               "lack-mw-test/jwt"
+               "lack-mw-test/language"
+               "lack-mw-test/method-override"
+               "lack-mw-test/powered-by"
+               "lack-mw-test/request-id"
+               "lack-mw-test/secure-headers"
+               "lack-mw-test/temporary-file"
+               "lack-mw-test/timing"
+               "lack-mw-test/trailing-slash"
+               "lack-mw-test/ua-blocker")
   :perform (test-op (o c) (symbol-call :rove :run c :style :dot)))
