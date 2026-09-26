@@ -16,6 +16,7 @@
                "lack-mw-test/jwt"
                "lack-mw-test/language"
                "lack-mw-test/method-override"
+               "lack-mw-test/oauth-providers"
                "lack-mw-test/powered-by"
                "lack-mw-test/request-id"
                "lack-mw-test/secure-headers"

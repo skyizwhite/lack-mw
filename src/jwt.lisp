@@ -8,6 +8,8 @@
   (:import-from #:cl-base64)
   (:import-from #:cl-ppcre)
   (:import-from #:quri)
+  (:import-from #:lack-mw/helpers/url
+                #:request-url)
   (:export #:*jwt*
            #:jwt-payload
            ;; shared with lack-mw/jwk
@@ -15,8 +17,7 @@
            #:jwk-get
            #:verify-jwt
            #:extract-token
-           #:unauthorized-response
-           #:request-url))
+           #:unauthorized-response))
 (in-package #:lack-mw/jwt)
 
 (defun jwt-payload (env)
@@ -228,15 +229,6 @@ Returns (values claims-alist T) on success, NIL when verification fails."
           (if (and token (string/= token ""))
               token
               (values nil "no authorization included in request"))))))
-
-(defun request-url (env)
-  (format nil "~A://~A~A"
-          (or (getf env :url-scheme) "http")
-          (or (header env "host")
-              (format nil "~A~@[:~A~]" (getf env :server-name)
-                      (let ((port (getf env :server-port)))
-                        (unless (member port '(nil 80 443)) port))))
-          (getf env :request-uri)))
 
 (defun escape-quotes (s)
   (ppcre:regex-replace-all "\"" s "\\\""))

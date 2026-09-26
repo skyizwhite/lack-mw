@@ -1,0 +1,48 @@
+(defpackage #:lack-mw/helpers/cookie
+  (:use #:cl)
+  (:import-from #:cl-ppcre)
+  (:import-from #:quri)
+  (:export #:parse-cookie
+           #:serialize-cookie))
+(in-package #:lack-mw/helpers/cookie)
+
+;;; Cookie parsing and serializing for the middlewares. Not re-exported from lack-mw.
+
+(defun trim (s)
+  (string-trim '(#\Space #\Tab #\Newline #\Return) s))
+
+(defun parse-cookie (header name)
+  (dolist (pair (ppcre:split ";" header))
+    (let ((eq-pos (position #\= pair)))
+      (when (and eq-pos (string= (trim (subseq pair 0 eq-pos)) name))
+        (let ((value (trim (subseq pair (1+ eq-pos)))))
+          (when (and (>= (length value) 2)
+                     (char= (char value 0) #\")
+                     (char= (char value (1- (length value))) #\"))
+            (setf value (subseq value 1 (1- (length value)))))
+          (return (handler-case (quri:url-decode value)
+                    (error () value))))))))
+
+(defun serialize-cookie (name value &key domain (path "/") same-site secure max-age http-only)
+  (unless (ppcre:scan "^[\\w!#$%&'*.^`|~+-]+$" name)
+    (error "Invalid cookie name: ~s" name))
+  (when (and (eql 0 (search "__Secure-" name)) (not secure))
+    (error "__Secure- Cookie must have Secure attributes"))
+  (when (eql 0 (search "__Host-" name))
+    (unless secure (error "__Host- Cookie must have Secure attributes"))
+    (unless (equal path "/") (error "__Host- Cookie must have Path attributes with \"/\""))
+    (when domain (error "__Host- Cookie must not have Domain attributes")))
+  (dolist (attr (list domain path same-site))
+    (when (and attr (find-if (lambda (c) (member c '(#\; #\Return #\Newline))) attr))
+      (error "Cookie attribute must not contain \";\", \"\\r\", or \"\\n\"")))
+  (when (and max-age (> max-age 34560000))
+    (error "Cookies Max-Age SHOULD NOT be greater than 400 days (34560000 seconds) in duration."))
+  (with-output-to-string (s)
+    (format s "~a=~a" name (quri:url-encode value))
+    (when (and max-age (>= max-age 0)) (format s "; Max-Age=~d" (floor max-age)))
+    (when domain (format s "; Domain=~a" domain))
+    (when path (format s "; Path=~a" path))
+    (when http-only (write-string "; HttpOnly" s))
+    (when secure (write-string "; Secure" s))
+    (when same-site
+      (format s "; SameSite=~:(~a~)" same-site))))
