@@ -18,7 +18,6 @@
                  #:lack-mw/powered-by
                  #:lack-mw/request-id
                  #:lack-mw/secure-headers
-                 #:lack-mw/temporary-file
                  #:lack-mw/timing
                  #:lack-mw/trailing-slash
                  #:lack-mw/ua-blocker

@@ -20,7 +20,6 @@ Middleware collection for [Lack](https://github.com/fukamachi/lack).
 - [powered-by](/docs/powered-by.md)
 - [request-id](/docs/request-id.md)
 - [secure-headers](/docs/secure-headers.md)
-- [temporary-file](/docs/temporary-file.md)
 - [timing](/docs/timing.md)
 - [trailing-slash](/docs/trailing-slash.md)
 - [ua-blocker](/docs/ua-blocker.md)

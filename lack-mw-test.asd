@@ -19,7 +19,6 @@
                "lack-mw-test/powered-by"
                "lack-mw-test/request-id"
                "lack-mw-test/secure-headers"
-               "lack-mw-test/temporary-file"
                "lack-mw-test/timing"
                "lack-mw-test/trailing-slash"
                "lack-mw-test/ua-blocker")
