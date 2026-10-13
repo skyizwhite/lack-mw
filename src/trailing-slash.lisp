@@ -13,10 +13,9 @@
             (and query-start (subseq request-uri query-start)))))
 
 (defun local-path-p (path)
-  (and (plusp (length path))
-       (char= (char path 0) #\/)
-       (not (and (> (length path) 1)
-                 (member (char path 1) '(#\/ #\\))))))
+  (let ((next (find-if-not (lambda (c) (member c '(#\Tab #\Linefeed #\Return)))
+                           path :start 1)))
+    (not (member next '(#\/ #\\)))))
 
 (defparameter *mw-trim-trailing-slash*
   (lambda (app)
