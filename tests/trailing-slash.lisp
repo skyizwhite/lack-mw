@@ -48,14 +48,14 @@
         (ok (string= body ""))
         (ok (eql status 301))
         (ok (string= (gethash "location" headers)
-                     "http://localhost/without/trailing/slash")))
+                     "/without/trailing/slash")))
       
       (multiple-value-bind (body status headers)
           (request "/without/trailing/slash/?param=foo" :max-redirects 0)
         (ok (string= body ""))
         (ok (eql status 301))
         (ok (string= (gethash "location" headers)
-                     "http://localhost/without/trailing/slash?param=foo")))))
+                     "/without/trailing/slash?param=foo")))))
   
   (testing "append"
     (testing-app *app-with-trailing-slash*
@@ -82,49 +82,36 @@
         (ok (string= body ""))
         (ok (eql status 301))
         (ok (string= (gethash "location" headers)
-                     "http://localhost/with/trailing/slash/")))
+                     "/with/trailing/slash/")))
 
       (multiple-value-bind (body status headers)
           (request "/with/trailing/slash?param=foo" :max-redirects 0)
         (ok (string= body ""))
         (ok (eql status 301))
         (ok (string= (gethash "location" headers)
-                     "http://localhost/with/trailing/slash/?param=foo"))))))
+                     "/with/trailing/slash/?param=foo"))))))
 
 (defun not-found-app (env)
   (declare (ignore env))
   '(404 () ("not found")))
 
 (defun redirect-location (mw request-uri)
-  (let ((headers (make-hash-table :test 'equal)))
-    (setf (gethash "host" headers) "localhost")
-    (let ((response (funcall (funcall mw #'not-found-app)
-                             (list :request-method :get
-                                   :request-uri request-uri
-                                   :url-scheme "http"
-                                   :headers headers))))
-      (and (eql (first response) 301)
-           (getf (second response) :location)))))
+  (let ((response (funcall (funcall mw #'not-found-app)
+                           (list :request-method :get :request-uri request-uri))))
+    (and (eql (first response) 301)
+         (getf (second response) :location))))
 
 (deftest trailing-slash-open-redirect
   (testing "trim"
-    (ok (string= (redirect-location *mw-trim-trailing-slash* "//evil.example/x/")
-                 "http://localhost//evil.example/x"))
-    (ok (string= (redirect-location *mw-trim-trailing-slash* "/\\evil.example/x/")
-                 "http://localhost/\\evil.example/x"))
-    (ok (string= (redirect-location *mw-trim-trailing-slash*
-                                    (format nil "/~C/evil.example/x/" #\Tab))
-                 (format nil "http://localhost/~C/evil.example/x" #\Tab)))
+    (ok (null (redirect-location *mw-trim-trailing-slash* "//evil.example/x/")))
+    (ok (null (redirect-location *mw-trim-trailing-slash* "/\\evil.example/x/")))
+    (ok (null (redirect-location *mw-trim-trailing-slash* "http://evil.example/x/")))
     (ok (string= (redirect-location *mw-trim-trailing-slash* "/a%3Fb/?q=1")
-                 "http://localhost/a%3Fb?q=1")))
+                 "/a%3Fb?q=1")))
 
   (testing "append"
-    (ok (string= (redirect-location *mw-append-trailing-slash* "//evil.example/x")
-                 "http://localhost//evil.example/x/"))
-    (ok (string= (redirect-location *mw-append-trailing-slash* "/\\evil.example/x")
-                 "http://localhost/\\evil.example/x/"))
-    (ok (string= (redirect-location *mw-append-trailing-slash*
-                                    (format nil "/~C/evil.example/x" #\Tab))
-                 (format nil "http://localhost/~C/evil.example/x/" #\Tab)))
+    (ok (null (redirect-location *mw-append-trailing-slash* "//evil.example/x")))
+    (ok (null (redirect-location *mw-append-trailing-slash* "/\\evil.example/x")))
+    (ok (null (redirect-location *mw-append-trailing-slash* "http://evil.example/x")))
     (ok (string= (redirect-location *mw-append-trailing-slash* "/a%3Fb?q=1")
-                 "http://localhost/a%3Fb/?q=1"))))
+                 "/a%3Fb/?q=1"))))
