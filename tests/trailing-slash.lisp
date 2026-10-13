@@ -114,6 +114,7 @@
     (ok (null (redirect-location *mw-trim-trailing-slash*
                                  (format nil "/~C~C\\evil.example/x/" #\Return #\Linefeed))))
     (ok (null (redirect-location *mw-trim-trailing-slash* "//")))
+    (ok (null (redirect-location *mw-trim-trailing-slash* "//?a=1")))
     (ok (string= (redirect-location *mw-trim-trailing-slash* "/a%3Fb/?q=1")
                  "/a%3Fb?q=1")))
 

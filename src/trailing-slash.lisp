@@ -11,6 +11,7 @@
 
 (defun local-path-p (path)
   (and (plusp (length path))
+       (char= (char path 0) #\/)
        (let ((next (find-if-not (lambda (c) (member c '(#\Tab #\Linefeed #\Return)))
                                 path :start 1)))
          (not (member next '(#\/ #\\))))))

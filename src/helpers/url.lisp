@@ -18,6 +18,5 @@ and port) and the request URI with its query."
           (getf env :request-uri)))
 
 (defun request-path (env)
-  "The path of the request URI in ENV, without its query."
   (let ((uri (getf env :request-uri)))
     (subseq uri 0 (position #\? uri))))
