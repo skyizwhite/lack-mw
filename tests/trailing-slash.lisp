@@ -97,7 +97,11 @@
 
 (defun redirect-location (mw request-uri)
   (let ((response (funcall (funcall mw #'not-found-app)
-                           (list :request-method :get :request-uri request-uri))))
+                           (list :request-method :get
+                                 :request-uri request-uri
+                                 :query-string (let ((query-start (position #\? request-uri)))
+                                                 (and query-start
+                                                      (subseq request-uri (1+ query-start))))))))
     (and (eql (first response) 301)
          (getf (second response) :location))))
 
