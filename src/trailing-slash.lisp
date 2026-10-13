@@ -29,19 +29,21 @@
         `(301 (:location ,location) ())
         response)))
 
+(defun trim-path (path)
+  (and (not (string= path "/"))
+       (string= (last-string path) "/")
+       (string-right-trim "/" path)))
+
+(defun append-path (path)
+  (and (not (string= (last-string path) "/"))
+       (concatenate 'string path "/")))
+
 (defparameter *mw-trim-trailing-slash*
   (lambda (app)
     (lambda (env)
-      (redirect-on-not-found app env
-                             (lambda (req-path)
-                               (and (not (string= req-path "/"))
-                                    (string= (last-string req-path) "/")
-                                    (string-right-trim "/" req-path)))))))
+      (redirect-on-not-found app env #'trim-path))))
 
 (defparameter *mw-append-trailing-slash*
   (lambda (app)
     (lambda (env)
-      (redirect-on-not-found app env
-                             (lambda (req-path)
-                               (and (not (string= (last-string req-path) "/"))
-                                    (concatenate 'string req-path "/")))))))
+      (redirect-on-not-found app env #'append-path))))
