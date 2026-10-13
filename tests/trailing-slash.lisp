@@ -109,6 +109,7 @@
                                  (format nil "/~C/evil.example/x/" #\Tab))))
     (ok (null (redirect-location *mw-trim-trailing-slash*
                                  (format nil "/~C~C\\evil.example/x/" #\Return #\Linefeed))))
+    (ok (null (redirect-location *mw-trim-trailing-slash* "//")))
     (ok (string= (redirect-location *mw-trim-trailing-slash* "/a%3Fb/?q=1")
                  "/a%3Fb?q=1")))
 
@@ -119,5 +120,7 @@
                                  (format nil "/~C/evil.example/x" #\Tab))))
     (ok (null (redirect-location *mw-append-trailing-slash*
                                  (format nil "/~C~C\\evil.example/x" #\Return #\Linefeed))))
+    (ok (null (redirect-location *mw-append-trailing-slash*
+                                 (format nil "/~C" #\Tab))))
     (ok (string= (redirect-location *mw-append-trailing-slash* "/a%3Fb?q=1")
                  "/a%3Fb/?q=1"))))
