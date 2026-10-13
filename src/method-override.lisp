@@ -7,6 +7,8 @@
   (:import-from #:lack/request
                 #:make-request
                 #:request-body-parameters)
+  (:import-from #:lack-mw/helpers/url
+                #:request-path)
   (:export #:*mw-method-override*))
 (in-package #:lack-mw/method-override)
 
@@ -48,8 +50,7 @@
     (when method
       (let* ((rest (remove-param name params))
              (new-query (and rest (quri:url-encode-params rest)))
-             (uri (getf env :request-uri))
-             (path (subseq uri 0 (position #\? uri))))
+             (path (request-path env)))
         (list* :request-method method
                :query-string new-query
                :query-parameters rest

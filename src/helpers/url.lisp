@@ -1,6 +1,7 @@
 (defpackage #:lack-mw/helpers/url
   (:use #:cl)
-  (:export #:request-url))
+  (:export #:request-url
+           #:request-path))
 (in-package #:lack-mw/helpers/url)
 
 ;;; URL helpers for the middlewares. Not re-exported from lack-mw.
@@ -15,3 +16,7 @@ and port) and the request URI with its query."
                       (let ((port (getf env :server-port)))
                         (unless (member port '(nil 80 443)) port))))
           (getf env :request-uri)))
+
+(defun request-path (env)
+  (let ((uri (getf env :request-uri)))
+    (subseq uri 0 (position #\? uri))))

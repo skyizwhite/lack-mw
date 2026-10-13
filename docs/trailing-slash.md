@@ -51,3 +51,5 @@ Example of redirecting a GET request of `/about/me/` to `/about/me`.
 ## Note
 
 It will be enabled when the request method is GET and the response status is `404`.
+
+To prevent open redirects, it does not redirect when the redirect target would start with `//` or `/\`.
